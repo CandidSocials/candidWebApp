@@ -46,7 +46,7 @@ e) FreelancerProfile.tsx
 5. STYLES
 - Implemented Tailwind CSS
 - Consistent design
-- Reusable UI componentss
+- Reusable UI components
 
 6. FUNCTIONALITY
 - Supabase integration
