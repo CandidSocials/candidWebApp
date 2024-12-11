@@ -158,4 +158,5 @@ CHECK (status IN ('open', 'closed', 'in_progress'));
 1. Resolve pending typing bugs
 2. Implement notification system for status changes.
 Improve error handling and user feedback.
-4. Add tests for new features
+4. Add tests for new features 
+testestestes
