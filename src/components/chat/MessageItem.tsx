@@ -11,7 +11,7 @@ export function MessageItem({ message, isOwnMessage, otherUserName }: MessageIte
       <div
         className={`max-w-[70%] rounded-lg px-4 py-2 ${
           isOwnMessage
-            ? 'bg-indigo-600 text-white'
+            ? 'bg-primary text-white'
             : 'bg-gray-100 text-gray-900'
         }`}
       >

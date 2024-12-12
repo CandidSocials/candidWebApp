@@ -47,7 +47,7 @@ export function RoleSelection() {
         <button
           onClick={() => handleRoleSelection('business')}
           disabled={loading}
-          className="w-full p-4 text-left border rounded-lg hover:border-indigo-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-colors"
+          className="w-full p-4 text-left border rounded-lg hover:border-primary-hover focus:border-primary-hover focus:ring-2 focus:ring-primary transition-colors"
         >
           <h3 className="text-lg font-semibold">Business Owner</h3>
           <p className="text-gray-600">I want to hire talented professionals</p>
@@ -55,7 +55,7 @@ export function RoleSelection() {
         <button
           onClick={() => handleRoleSelection('freelancer')}
           disabled={loading}
-          className="w-full p-4 text-left border rounded-lg hover:border-indigo-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-colors"
+          className="w-full p-4 text-left border rounded-lg hover:border-primary-hover focus:border-primary-hover focus:ring-2 focus:ring-primary transition-colors"
         >
           <h3 className="text-lg font-semibold">Freelancer</h3>
           <p className="text-gray-600">I want to offer my services</p>

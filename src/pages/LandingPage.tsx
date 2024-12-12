@@ -31,7 +31,7 @@ export function LandingPage() {
       {/* Hero Section */}
       <div className="text-center py-16 sm:py-24">
         <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight">
-          Find Local Talent <span className="text-indigo-600">Near You</span> at Candid Socials
+          Find Local Talent <span className="text-primary">Near You</span> at Candid Socials
         </h1>
         <p className="mt-6 text-xl text-gray-500 max-w-3xl mx-auto">
           Connect with skilled professionals in your area or find local businesses looking for your expertise.
@@ -39,7 +39,7 @@ export function LandingPage() {
         <div className="mt-10">
           <Link
             to="/auth"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
           >
             Get Started
           </Link>
@@ -53,7 +53,7 @@ export function LandingPage() {
           <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-3 lg:gap-x-8">
             <div className="text-center">
               <div className="flex justify-center">
-                <MapPin className="h-12 w-12 text-indigo-600" />
+                <MapPin className="h-12 w-12 text-primary" />
               </div>
               <h3 className="mt-6 text-lg font-medium text-gray-900">Local Connections</h3>
               <p className="mt-2 text-base text-gray-500">
@@ -63,7 +63,7 @@ export function LandingPage() {
 
             <div className="text-center">
               <div className="flex justify-center">
-                <Users className="h-12 w-12 text-indigo-600" />
+                <Users className="h-12 w-12 text-primary" />
               </div>
               <h3 className="mt-6 text-lg font-medium text-gray-900">Verified Professionals</h3>
               <p className="mt-2 text-base text-gray-500">
@@ -73,7 +73,7 @@ export function LandingPage() {
 
             <div className="text-center">
               <div className="flex justify-center">
-                <Shield className="h-12 w-12 text-indigo-600" />
+                <Shield className="h-12 w-12 text-primary" />
               </div>
               <h3 className="mt-6 text-lg font-medium text-gray-900">Secure Platform</h3>
               <p className="mt-2 text-base text-gray-500">
@@ -101,7 +101,7 @@ export function LandingPage() {
               <div className="p-6">
                 <div className="flex justify-between items-start">
                   <h3 className="text-xl font-semibold text-gray-900">{job.title}</h3>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-primary">
                     {job.category}
                   </span>
                 </div>
@@ -137,7 +137,7 @@ export function LandingPage() {
                     </div>
                     <button
                       onClick={() => setSelectedJob(job)}
-                      className="mt-6 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
+                      className="mt-6 w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-rimary transition-colors"
                     >
                       View Details
                     </button>
@@ -151,7 +151,7 @@ export function LandingPage() {
                       <Lock className="h-5 w-5 text-gray-400 mr-2" />
                       <Link
                         to="/auth"
-                        className="text-indigo-600 hover:text-indigo-800 font-medium"
+                        className="text-primary hover:text-primary-hover font-medium"
                       >
                         Sign in to view details
                       </Link>
@@ -166,7 +166,7 @@ export function LandingPage() {
         <div className="mt-12 text-center">
           <Link
             to={user ? "/jobs" : "/auth"}
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
           >
             {user ? "View All Jobs" : "Sign Up to See More"}
           </Link>
@@ -177,12 +177,12 @@ export function LandingPage() {
       <div className="text-center py-16 sm:py-24">
         <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
           <span className="block">Ready to get started?</span>
-          <span className="block text-indigo-600">Join our community today.</span>
+          <span className="block text-primary">Join our community today.</span>
         </h2>
         <div className="mt-8 flex justify-center">
           <Link
             to="/auth"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover"
           >
             Sign Up Now
           </Link>

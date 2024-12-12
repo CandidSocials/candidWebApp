@@ -103,7 +103,7 @@ export function AuthForm() {
               Don't have an account?{' '}
               <button
                 onClick={() => setMode('signup')}
-                className="text-indigo-600 hover:text-indigo-500"
+                className="text-primary hover:text-primary-hover"
               >
                 Sign up
               </button>
@@ -113,7 +113,7 @@ export function AuthForm() {
               Already have an account?{' '}
               <button
                 onClick={() => setMode('signin')}
-                className="text-indigo-600 hover:text-indigo-500"
+                className="text-primary hover:text-primary-hover"
               >
                 Sign in
               </button>
@@ -139,7 +139,7 @@ export function AuthForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
           />
         </div>
 
@@ -153,7 +153,7 @@ export function AuthForm() {
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
           />
         </div>
 
@@ -169,7 +169,7 @@ export function AuthForm() {
                 required
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
               />
             </div>
 
@@ -183,8 +183,8 @@ export function AuthForm() {
                   onClick={() => setRole('business')}
                   className={`w-full p-3 text-left border rounded-lg transition-colors ${
                     role === 'business'
-                      ? 'border-indigo-500 bg-indigo-50'
-                      : 'hover:border-indigo-500'
+                      ? 'border-primary bg-indigo-50'
+                      : 'hover:border-primary'
                   }`}
                 >
                   <span className="font-medium">Hire Talent</span>
@@ -195,8 +195,8 @@ export function AuthForm() {
                   onClick={() => setRole('freelancer')}
                   className={`w-full p-3 text-left border rounded-lg transition-colors ${
                     role === 'freelancer'
-                      ? 'border-indigo-500 bg-indigo-50'
-                      : 'hover:border-indigo-500'
+                      ? 'border-primary bg-indigo-50'
+                      : 'hover:border-primary'
                   }`}
                 >
                   <span className="font-medium">Work as a Freelancer</span>
@@ -210,7 +210,7 @@ export function AuthForm() {
         <button
           type="submit"
           disabled={loading || (mode === 'signup' && !role)}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
         >
           {loading ? (
             <div className="flex items-center">

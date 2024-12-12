@@ -144,7 +144,7 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
 
         {loading ? (
           <div className="flex justify-center items-center h-48">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : applications.length === 0 ? (
           <div className="text-center text-gray-500 py-8">
@@ -200,7 +200,7 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
                   ) : application.status === 'accepted' && (
                     <button
                       onClick={() => handleStartChat(application.id)}
-                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-primary"
                     >
                       <MessageSquare className="h-4 w-4 mr-1" />
                       Chat

@@ -133,7 +133,7 @@ export function ReviewForm({ freelancerId, onClose, onSuccess }: ReviewFormProps
               onChange={(e) => setComment(e.target.value)}
               required
               rows={4}
-              className="w-full border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="w-full border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring-primary"
             />
           </div>
 
@@ -148,7 +148,7 @@ export function ReviewForm({ freelancerId, onClose, onSuccess }: ReviewFormProps
             <button
               type="submit"
               disabled={loading || rating === 0}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-hoverrounded-md disabled:opacity-50"
             >
               {loading ? 'Submitting...' : 'Submit Review'}
             </button>

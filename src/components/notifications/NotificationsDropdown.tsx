@@ -91,7 +91,7 @@ export function NotificationsDropdown({ onClose }: { onClose: () => void }) {
                   </p>
                 </div>
                 {!notification.read && (
-                  <span className="ml-2 flex-shrink-0 inline-block w-2 h-2 bg-blue-600 rounded-full"></span>
+                  <span className="ml-2 flex-shrink-0 inline-block w-2 h-2 bg-primary rounded-full"></span>
                 )}
               </button>
             ))}

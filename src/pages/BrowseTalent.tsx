@@ -32,7 +32,7 @@ export function BrowseTalent() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -54,7 +54,7 @@ export function BrowseTalent() {
             <div className="p-6">
               <div className="flex justify-between items-start">
                 <h2 className="text-xl font-semibold text-gray-900">{listing.title}</h2>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-primary">
                   {listing.category}
                 </span>
               </div>
@@ -87,7 +87,7 @@ export function BrowseTalent() {
               </div>
               <Link
                 to={`/freelancer/${listing.user_id}`}
-                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
               >
                 View Full Profile
               </Link>

@@ -107,7 +107,7 @@ export function JobApplicationModal({ job, onClose, onSuccess }: JobApplicationM
               name="coverLetter"
               required
               rows={4}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
               placeholder="Tell us why you're perfect for this job..."
             />
           </div>
@@ -123,7 +123,7 @@ export function JobApplicationModal({ job, onClose, onSuccess }: JobApplicationM
               required
               min="0"
               step="0.01"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
             />
           </div>
 
@@ -138,7 +138,7 @@ export function JobApplicationModal({ job, onClose, onSuccess }: JobApplicationM
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary-hover rounded-md disabled:opacity-50"
             >
               {loading ? 'Submitting...' : 'Submit Application'}
             </button>

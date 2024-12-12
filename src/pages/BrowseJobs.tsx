@@ -36,7 +36,7 @@ export function BrowseJobs() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -58,7 +58,7 @@ export function BrowseJobs() {
             <div className="p-6">
               <div className="flex justify-between items-start">
                 <h2 className="text-xl font-semibold text-gray-900">{job.title}</h2>
-                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-primary">
                   {job.category}
                 </span>
               </div>
@@ -92,7 +92,7 @@ export function BrowseJobs() {
               {profile?.role === 'freelancer' && (
                 <button
                   onClick={() => setSelectedJob(job)}
-                  className="mt-6 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
+                  className="mt-6 w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-hovertransition-colors"
                 >
                   Apply Now
                 </button>

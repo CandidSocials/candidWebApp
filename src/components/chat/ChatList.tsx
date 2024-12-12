@@ -115,7 +115,7 @@ export function ChatList() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-48">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     )
   }
@@ -142,7 +142,7 @@ export function ChatList() {
         >
           <div className="px-4 py-4 sm:px-6">
             <div className="flex items-center justify-between">
-              <p className="truncate text-sm font-medium text-indigo-600">
+              <p className="truncate text-sm font-medium text-primary">
                 {chat.other_user.full_name}
               </p>
               {chat.last_message && (

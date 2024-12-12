@@ -111,7 +111,7 @@ export function FreelancerDirectory() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     )
   }
@@ -144,7 +144,7 @@ export function FreelancerDirectory() {
                   placeholder="Search by name, skills, or bio..."
                   value={filters.search}
                   onChange={(e) => handleFilterChange('search', e.target.value)}
-                  className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="pl-10 w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
                 />
               </div>
             </div>
@@ -157,7 +157,7 @@ export function FreelancerDirectory() {
               <select
                 value={filters.category}
                 onChange={(e) => handleFilterChange('category', e.target.value)}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
               >
                 <option value="">All Categories</option>
                 {availableSkills.map(skill => (
@@ -176,7 +176,7 @@ export function FreelancerDirectory() {
                 placeholder="Filter by location"
                 value={filters.location}
                 onChange={(e) => handleFilterChange('location', e.target.value)}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
               />
             </div>
 
@@ -191,7 +191,7 @@ export function FreelancerDirectory() {
                   placeholder="Min $"
                   value={filters.minRate}
                   onChange={(e) => handleFilterChange('minRate', e.target.value)}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
                 />
               </div>
               <div>
@@ -203,7 +203,7 @@ export function FreelancerDirectory() {
                   placeholder="Max $"
                   value={filters.maxRate}
                   onChange={(e) => handleFilterChange('maxRate', e.target.value)}
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
                 />
               </div>
             </div>
@@ -216,7 +216,7 @@ export function FreelancerDirectory() {
               <select
                 value={filters.availability}
                 onChange={(e) => handleFilterChange('availability', e.target.value)}
-                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
               >
                 <option value="">All Availabilities</option>
                 <option value="available">Available</option>
@@ -295,7 +295,7 @@ export function FreelancerDirectory() {
 
               <Link
                 to={`/freelancer/${freelancer.user_id}`}
-                className="block w-full text-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                className="block w-full text-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
               >
                 View Profile
               </Link>

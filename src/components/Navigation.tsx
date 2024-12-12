@@ -28,13 +28,12 @@ export function Navigation() {
     <nav className="bg-white shadow-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
+          <div className="flex items-center w-fit">
             <button
               onClick={handleLogoClick}
               className="flex items-center"
             >
-              <Search className="h-6 w-6 text-indigo-600" />
-              <span className="ml-2 text-xl font-bold text-gray-900">LocalTalent</span>
+              <img src="/src/static/nav-logo.png" height="auto" width="150px" />
             </button>
           </div>
 
@@ -43,14 +42,14 @@ export function Navigation() {
               <>
                 <button
                   onClick={() => navigate('/dashboard')}
-                  className="text-gray-600 hover:text-gray-900"
+                  className="text-primary hover:text-primary-hover"
                 >
                   Dashboard
                 </button>
                 {profile.role === 'freelancer' && (
                   <button
                     onClick={() => navigate('/jobs')}
-                    className="text-gray-600 hover:text-gray-900"
+                    className="text-primary hover:text-primary-hover"
                   >
                     Job Listings
                   </button>
@@ -58,26 +57,26 @@ export function Navigation() {
                 {profile.role === 'business' && (
                   <button
                     onClick={() => navigate('/my-jobs')}
-                    className="text-gray-600 hover:text-gray-900"
+                    className="text-primary hover:text-primary-hover"
                   >
                     My Jobs
                   </button>
                 )}
                 <button
                   onClick={() => navigate('/profile')}
-                  className="text-gray-600 hover:text-gray-900"
+                  className="text-primary hover:text-primary-hover"
                 >
                   Profile
                 </button>
                 <Link
                   to="/freelancers"
-                  className="text-gray-600 hover:text-gray-900"
+                  className="text-primary hover:text-primary-hover"
                 >
                   Browse Freelancers
                 </Link>
                 <Link
                   to="/chats"
-                  className="text-gray-600 hover:text-gray-900 flex items-center"
+                  className="text-primary hover:text-primary-hover flex items-center"
                 >
                   <MessageSquare className="h-5 w-5 mr-1" />
                   Chats
@@ -85,7 +84,7 @@ export function Navigation() {
                 <NotificationBell />
                 <button
                   onClick={handleSignOut}
-                  className="text-gray-600 hover:text-gray-900"
+                  className="text-primary hover:text-primary-hover"
                 >
                   Sign Out
                 </button>
@@ -93,7 +92,7 @@ export function Navigation() {
             ) : (
               <button
                 onClick={handleAuthClick}
-                className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700"
+                className="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary-hover"
               >
                 Sign In
               </button>

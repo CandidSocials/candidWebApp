@@ -9,7 +9,7 @@ export function Profile() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -20,7 +20,7 @@ export function Profile() {
         <p className="text-red-600">Profile not found</p>
         <button
           onClick={() => navigate('/role-selection')}
-          className="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+          className="mt-4 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover"
         >
           Complete Profile Setup
         </button>
@@ -95,7 +95,7 @@ export function Profile() {
         <div className="px-4 py-5 sm:px-6">
           <button
             onClick={() => navigate('/profile/setup')}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover"
           >
             Edit Profile
           </button>
