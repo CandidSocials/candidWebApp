@@ -44,7 +44,7 @@ export function ChatRoom() {
     }
   }, [chatId, user])
 
-  const fetchChatInfo = async () => {
+  /* const fetchChatInfo = async () => {
     try {
       const { data: chat, error } = await supabase
         .from('chats')
@@ -86,7 +86,56 @@ export function ChatRoom() {
       console.error('Error fetching chat info:', err)
       setError('Error loading chat information')
     }
-  }
+  } */
+
+    const fetchChatInfo = async () => {
+      try {
+        // First, get the chat details
+        const { data: chat, error: chatError } = await supabase
+          .from('chats')
+          .select(`
+            id,
+            business_id,
+            freelancer_id,
+            job_applications (
+              job_listings (
+                title
+              )
+            )
+          `)
+          .eq('id', chatId)
+          .single()
+    
+        if (chatError) throw chatError
+    
+        if (chat) {
+          // Then fetch the business and freelancer profiles separately
+          const { data: businessProfile } = await supabase
+            .from('user_profiles')
+            .select('full_name')
+            .eq('user_id', chat.business_id)
+            .single()
+    
+          const { data: freelancerProfile } = await supabase
+            .from('user_profiles')
+            .select('full_name')
+            .eq('user_id', chat.freelancer_id)
+            .single()
+    
+          const otherUser = user?.id === chat.business_id
+            ? freelancerProfile?.full_name
+            : businessProfile?.full_name
+    
+          setInfo({
+            title: chat.job_applications?.[0]?.job_listings?.[0]?.title,
+            otherUser: otherUser || 'Unknown User'
+          })
+        }
+      } catch (err) {
+        console.error('Error fetching chat info:', err)
+        setError('Error loading chat information')
+      }
+    }
 
   const fetchMessages = async () => {
     try {
