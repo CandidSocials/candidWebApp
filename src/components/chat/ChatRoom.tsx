@@ -44,49 +44,6 @@ export function ChatRoom() {
     }
   }, [chatId, user])
 
-  /* const fetchChatInfo = async () => {
-    try {
-      const { data: chat, error } = await supabase
-        .from('chats')
-        .select(`
-          job_application:job_applications (
-            job:job_listings (
-              title
-            )
-          ),
-          business:business_id (
-            profile:user_profiles!inner (
-              full_name,
-              user_id
-            )
-          ),
-          freelancer:freelancer_id (
-            profile:user_profiles!inner (
-              full_name,
-              user_id
-            )
-          )
-        `)
-        .eq('id', chatId)
-        .single()
-
-      if (error) throw error
-
-      if (chat) {
-        const otherUser = user?.id === chat.business.profile.user_id
-          ? chat.freelancer.profile.full_name
-          : chat.business.profile.full_name
-
-        setInfo({
-          title: chat.job_application.job.title,
-          otherUser
-        })
-      }
-    } catch (err) {
-      console.error('Error fetching chat info:', err)
-      setError('Error loading chat information')
-    }
-  } */
 
     const fetchChatInfo = async () => {
       try {
@@ -137,28 +94,28 @@ export function ChatRoom() {
       }
     }
 
-  const fetchMessages = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('chat_messages_with_sender')
-        .select('*')
-        .eq('chat_id', chatId)
-        .order('created_at', { ascending: true })
-
-      if (error) throw error
-
-      if (data) {
-        setMessages(data)
-        scrollToBottom()
-        await markMessagesAsRead(data)
+    const fetchMessages = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('chat_messages_with_sender')
+          .select('*')
+          .eq('chat_id', chatId)
+          .order('created_at', { ascending: true })
+    
+        if (error) throw error
+    
+        if (data) {
+          setMessages(data)
+          scrollToBottom()
+          await markMessagesAsRead(data)
+        }
+      } catch (err) {
+        console.error('Error fetching messages:', err)
+        setError('Error loading messages')
+      } finally {
+        setLoading(false)
       }
-    } catch (err) {
-      console.error('Error fetching messages:', err)
-      setError('Error loading messages')
-    } finally {
-      setLoading(false)
     }
-  }
 
   const markMessagesAsRead = async (messages: Message[]) => {
     const unreadMessages = messages.filter(
@@ -215,13 +172,12 @@ export function ChatRoom() {
         ])
 
       if (error) throw error
-
       setNewMessage('')
     } catch (error) {
       console.error('Error sending message:', error)
     }
   }
-
+  
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
