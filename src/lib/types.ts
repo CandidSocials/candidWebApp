@@ -1,5 +1,19 @@
 export type UserRole = 'business' | 'freelancer';
 
+export const CATEGORIES = [
+  'Web Development',
+  'Mobile Development',
+  'UI/UX Design',
+  'Graphic Design',
+  'Digital Marketing',
+  'Content Writing',
+  'Video Editing',
+  'Photography',
+  'Other'
+] as const;
+
+export type Category = typeof CATEGORIES[number];
+
 export interface UserProfile {
   id: string;
   user_id: string;
@@ -23,7 +37,7 @@ export interface JobListing {
   skills_required: string[];
   created_at: string;
   company_name?: string;
-  status: 'open' | 'closed';
+  status: 'open' | 'closed' | 'in_progress';
 }
 
 export interface JobApplication {
@@ -36,6 +50,31 @@ export interface JobApplication {
   created_at: string;
   freelancer?: {
     full_name: string;
+  };
+  job_listings?: JobListing;
+}
+
+export interface Message {
+  id: string;
+  chat_id: string;
+  sender_id: string;
+  content: string;
+  created_at: string;
+  read: boolean;
+  sender: {
+    profile: {
+      full_name: string;
+    };
+  };
+}
+
+export interface ChatInfo {
+  business_id: string;
+  freelancer_id: string;
+  job_application: {
+    job: {
+      title: string;
+    };
   };
 }
 
@@ -51,17 +90,3 @@ export interface TalentListing {
   user_email: string;
   created_at: string;
 }
-
-export const CATEGORIES = [
-  'Web Development',
-  'Mobile Development',
-  'UI/UX Design',
-  'Graphic Design',
-  'Digital Marketing',
-  'Content Writing',
-  'Video Editing',
-  'Photography',
-  'Other'
-] as const;
-
-export type Category = typeof CATEGORIES[number];

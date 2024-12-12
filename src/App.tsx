@@ -15,6 +15,8 @@ import { MyJobs } from './pages/MyJobs';
 import { FreelancerPublicProfile } from './components/freelancer/FreelancerPublicProfile'
 import { FreelancerDirectory } from './pages/FreelancerDirectory'
 import { FreelancerProfile } from './pages/FreelancerProfile'
+import { Chats } from './pages/Chats'
+import { ChatRoom } from './components/chat/ChatRoom'
 
 function App() {
   return (
@@ -95,6 +97,22 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <FreelancerDirectory />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chats"
+                element={
+                  <ProtectedRoute>
+                    <Chats />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/chat/:chatId"
+                element={
+                  <ProtectedRoute>
+                    <ChatRoom />
                   </ProtectedRoute>
                 }
               />

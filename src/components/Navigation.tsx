@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Search } from 'lucide-react';
+import { Search, MessageSquare } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useProfile } from '../lib/useProfile';
 import { useAuth } from '../lib/AuthProvider';
@@ -74,6 +74,13 @@ export function Navigation() {
                   className="text-gray-600 hover:text-gray-900"
                 >
                   Browse Freelancers
+                </Link>
+                <Link
+                  to="/chats"
+                  className="text-gray-600 hover:text-gray-900 flex items-center"
+                >
+                  <MessageSquare className="h-5 w-5 mr-1" />
+                  Chats
                 </Link>
                 <NotificationBell />
                 <button

@@ -14,20 +14,38 @@ export function NotificationBell() {
 
     // Fetch initial unread count
     const fetchUnreadCount = async () => {
-      const { count } = await supabase
-        .from('notifications')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', user.id)
-        .eq('read', false);
+      try {
+        const [{ count: notificationsCount }, { count: messagesCount }] = await Promise.all([
+          supabase
+            .from('notifications')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+            .eq('read', false),
+          supabase
+            .from('chat_messages')
+            .select('*', { count: 'exact', head: true })
+            .eq('read', false)
+            .neq('sender_id', user.id)
+            .or(`chat_id.in.(${
+              supabase
+                .from('chats')
+                .select('id')
+                .or(`business_id.eq.${user.id},freelancer_id.eq.${user.id}`)
+                .toString()
+            })`)
+        ]);
 
-      setUnreadCount(count || 0);
+        setUnreadCount((notificationsCount || 0) + (messagesCount || 0));
+      } catch (error) {
+        console.error('Error fetching unread count:', error);
+      }
     };
 
     fetchUnreadCount();
 
-    // Subscribe to new notifications
-    const channel = supabase
-      .channel('notifications')
+    // Subscribe to new notifications and messages
+    const notificationsChannel = supabase
+      .channel('notifications-count')
       .on(
         'postgres_changes',
         {
@@ -36,14 +54,30 @@ export function NotificationBell() {
           table: 'notifications',
           filter: `user_id=eq.${user.id}`,
         },
-        () => {
-          fetchUnreadCount();
+        () => fetchUnreadCount()
+      )
+      .subscribe();
+
+    const messagesChannel = supabase
+      .channel('messages-count')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages',
+        },
+        (payload) => {
+          if (payload.new.sender_id !== user.id) {
+            fetchUnreadCount();
+          }
         }
       )
       .subscribe();
 
     return () => {
-      channel.unsubscribe();
+      notificationsChannel.unsubscribe();
+      messagesChannel.unsubscribe();
     };
   }, [user]);
 

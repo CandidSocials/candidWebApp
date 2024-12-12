@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { JobApplication, JobListing } from '../../lib/types';
-import { X, Check, XCircle } from 'lucide-react';
+import { X, Check, XCircle, MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface JobApplicationsListModalProps {
   job: JobListing;
@@ -9,6 +10,7 @@ interface JobApplicationsListModalProps {
 }
 
 export function JobApplicationsListModal({ job, onClose }: JobApplicationsListModalProps) {
+  const navigate = useNavigate();
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -19,7 +21,6 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
 
   const fetchApplications = async () => {
     try {
-      // First get the applications
       const { data: applicationsData, error: applicationsError } = await supabase
         .from('job_applications')
         .select('*')
@@ -28,7 +29,6 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
 
       if (applicationsError) throw applicationsError;
 
-      // Then get the user profiles for each application
       const applications = await Promise.all(
         (applicationsData || []).map(async (application) => {
           const { data: profileData } = await supabase
@@ -64,6 +64,24 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
 
       if (error) throw error;
 
+      // If accepted, create a chat
+      if (newStatus === 'accepted') {
+        const application = applications.find(app => app.id === applicationId);
+        if (application) {
+          const { error: chatError } = await supabase
+            .from('chats')
+            .insert([
+              {
+                job_application_id: applicationId,
+                business_id: job.business_id,
+                freelancer_id: application.freelancer_id
+              }
+            ]);
+
+          if (chatError) throw chatError;
+        }
+      }
+
       // Create notification for the freelancer
       const application = applications.find(app => app.id === applicationId);
       if (application) {
@@ -89,6 +107,22 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
     } catch (err) {
       console.error('Error updating application status:', err);
       setError(err instanceof Error ? err.message : 'Failed to update application status');
+    }
+  };
+
+  const handleStartChat = async (applicationId: string) => {
+    try {
+      const { data: chat } = await supabase
+        .from('chats')
+        .select('id')
+        .eq('job_application_id', applicationId)
+        .single();
+
+      if (chat) {
+        navigate(`/chat/${chat.id}`);
+      }
+    } catch (error) {
+      console.error('Error finding chat:', error);
     }
   };
 
@@ -145,24 +179,34 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
                     Proposed Rate: ${application.proposed_rate}/hour
                   </p>
                 </div>
-                {application.status === 'pending' && (
-                  <div className="mt-4 flex space-x-2">
+                <div className="mt-4 flex space-x-2">
+                  {application.status === 'pending' ? (
+                    <>
+                      <button
+                        onClick={() => handleStatusUpdate(application.id, 'accepted')}
+                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Accept
+                      </button>
+                      <button
+                        onClick={() => handleStatusUpdate(application.id, 'rejected')}
+                        className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+                      >
+                        <XCircle className="h-4 w-4 mr-1" />
+                        Reject
+                      </button>
+                    </>
+                  ) : application.status === 'accepted' && (
                     <button
-                      onClick={() => handleStatusUpdate(application.id, 'accepted')}
-                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+                      onClick={() => handleStartChat(application.id)}
+                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
                     >
-                      <Check className="h-4 w-4 mr-1" />
-                      Accept
+                      <MessageSquare className="h-4 w-4 mr-1" />
+                      Chat
                     </button>
-                    <button
-                      onClick={() => handleStatusUpdate(application.id, 'rejected')}
-                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
-                    >
-                      <XCircle className="h-4 w-4 mr-1" />
-                      Reject
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ))}
           </div>
