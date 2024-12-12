@@ -4,9 +4,9 @@ import { useMessages } from './hooks/useMessages'
 import { MessageItem } from './MessageItem'
 import { MessageInput } from './MessageInput'
 import { useAuth } from '@/lib/AuthProvider'
-import { ChatRoomProps } from './types'
+import { ChatProps } from './types'
 
-export function ChatRoom({ chatId, otherUserName }: ChatRoomProps) {
+export function Chat({ chatId, otherUserName }: ChatProps) {
   const { user } = useAuth()
   const { messages, loading, sendMessage } = useMessages(chatId)
   const scrollAreaRef = useRef<HTMLDivElement>(null)
@@ -26,8 +26,8 @@ export function ChatRoom({ chatId, otherUserName }: ChatRoomProps) {
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <ScrollArea className="flex-1 p-4">
+    <div className="flex flex-col h-[400px]">
+      <ScrollArea className="flex-grow p-4" ref={scrollAreaRef}>
         <div className="space-y-4">
           {messages.map((message) => (
             <MessageItem
