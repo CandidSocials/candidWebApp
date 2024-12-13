@@ -7,7 +7,7 @@ interface OnlineUsersProps {
   isLoading?: boolean;
 }
 
-export function OnlineUsers({ users, isLoading = false }: OnlineUsersProps) {
+export function OnlineUsers({ users = [], isLoading = false }: OnlineUsersProps) {
   if (isLoading) {
     return (
       <div className="w-64 border-l">
@@ -44,7 +44,7 @@ export function OnlineUsers({ users, isLoading = false }: OnlineUsersProps) {
                     {user.profile.full_name}
                   </div>
                   <div className="text-xs text-gray-500">
-                    {new Date(user.last_seen).toLocaleTimeString()}
+                    {new Date(user.last_seen || '').toLocaleTimeString()}
                   </div>
                 </div>
               </div>
