@@ -68,12 +68,15 @@ export function Navigation() {
                 >
                   Profile
                 </button>
-                <Link
-                  to="/freelancers"
-                  className="text-primary hover:text-primary-hover"
-                >
-                  Browse Freelancers
-                </Link>
+                {profile.role === 'business' && (
+                  <Link
+                    to="/freelancers"
+                    className="text-primary hover:text-primary-hover"
+                  >
+                    Browse Freelancers
+                  </Link>
+                )}
+                
                 <Link
                   to="/chats"
                   className="text-primary hover:text-primary-hover flex items-center"
