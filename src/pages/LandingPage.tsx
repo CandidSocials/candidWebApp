@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Briefcase, Users, MapPin, Shield, DollarSign, Clock, Lock } from 'lucide-react'
+import { Briefcase, Users, MapPin, Shield, DollarSign, Clock, Lock, SearchIcon, Camera, Video } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { JobListing } from '../lib/types'
 import { useAuth } from '../lib/AuthProvider'
@@ -29,21 +29,74 @@ export function LandingPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Hero Section */}
-      <div className="text-center py-16 sm:py-24">
-        <h1 className="text-4xl sm:text-6xl font-extrabold text-gray-900 tracking-tight">
-          Find Local Talent <span className="text-primary">Near You</span> at Candid Socials
-        </h1>
-        <p className="mt-6 text-xl text-gray-500 max-w-3xl mx-auto">
-          Connect with skilled professionals in your area or find local businesses looking for your expertise.
-        </p>
-        
-        <div className="mt-12 text-center">
-          <Link
-            to={user ? "/dashboard" : "/auth"}
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
-          >
-            {user ? "Dashboard" : "Get Started"}
-          </Link>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row items-center justify-between py-16 sm:py-24 gap-12">
+          {/* Left side content */}
+          <div className="lg:w-1/2 space-y-6 mb-32">
+            <h1 className="text-5xl sm:text-6xl font-normal text-primary tracking-tight ">
+              Find Local Talent Near You At Candid App
+            </h1>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search services near you..."
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
+              />
+              <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#003912] text-white p-2 rounded-lg">
+                <SearchIcon className="h-5 w-5 p-0.5" />
+              </button>
+            </div>
+            <div className="flex gap-8 pt-4">
+              <div>
+                <div className="text-2xl font-normal text-primary">30+</div>
+                <div className="text-gray-600 font-bold">Live Gigs</div>
+              </div>
+              <div>
+                <div className="text-2xl font-normal text-primary">20+</div>
+                <div className="text-gray-600 font-bold">Creative Professionals</div>
+              </div>
+              <div>
+                <div className="text-2xl font-normal text-primary">50+</div>
+                <div className="text-gray-600 font-bold">Satisfied Businesses</div>
+              </div>
+            </div>
+          </div>
+          
+          {/* Right side images */}
+          <div className="lg:w-1/2 relative mt-12 lg:mt-0">
+            <div className="relative z-10 grid grid-cols-2 gap-4">
+              <div className="rounded-full h-fit mt-24">
+                <img src="src\static\LandingPage\hero-2.webp" alt="Photographer" className="rounded-lg" />
+              </div>
+              <div className="rounded-full">
+                <img src="src\static\LandingPage\hero-1.webp" alt="Videographer" className="rounded-lg" />
+              </div>
+            </div>
+            {/* Background decoration */}
+            <div className="absolute -z-10 top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[#E6F7F4] rounded-full opacity-20"></div>
+          </div>
+        </div>
+
+        {/* Service Icons */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12">
+          <div className="text-center space-y-4">
+            <div className="inline-block p-4 bg-primary/10 rounded-full">
+              <Users className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="font-semibold">Book the Best Photographers for Unforgettable Moments</h3>
+          </div>
+          <div className="text-center space-y-4">
+            <div className="inline-block p-4 bg-primary/10 rounded-full">
+              <Video className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="font-semibold">Hire the Top Videographers for Every Occasion</h3>
+          </div>
+          <div className="text-center space-y-4">
+            <div className="inline-block p-4 bg-primary/10 rounded-full">
+             <Camera className="h-8 w-8 text-primary" />
+            </div>
+            <h3 className="font-semibold">Book the Best Photographers for Unforgettable Moments</h3>
+          </div>
         </div>
       </div>
 
