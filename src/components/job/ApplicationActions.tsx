@@ -1,11 +1,12 @@
-import { useState } from 'react'
-import { useJobStatus } from '../../hooks/useJobStatus'
+import { useState } from 'react';
+import { supabase } from '../../lib/supabase';
+import { Check, X } from 'lucide-react';
 
 interface ApplicationActionsProps {
-  jobId: string
-  applicationId: string
-  currentStatus: string
-  onStatusChange: () => void
+  jobId: string;
+  applicationId: string;
+  currentStatus: string;
+  onStatusChange: () => void;
 }
 
 export function ApplicationActions({
@@ -14,48 +15,59 @@ export function ApplicationActions({
   currentStatus,
   onStatusChange
 }: ApplicationActionsProps) {
-  const [isProcessing, setIsProcessing] = useState(false)
-  const { updateJobStatus, isUpdating } = useJobStatus({
-    jobId,
-    onStatusChange: () => onStatusChange()
-  })
+  const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleAccept = async () => {
-    setIsProcessing(true)
+  const handleStatusUpdate = async (newStatus: 'accepted' | 'rejected') => {
+    setIsProcessing(true);
     try {
-      // Actualizar estado de la aplicación
+      // Update application status
       const { error: applicationError } = await supabase
         .from('job_applications')
-        .update({ status: 'accepted' })
-        .eq('id', applicationId)
+        .update({ status: newStatus })
+        .eq('id', applicationId);
 
-      if (applicationError) throw applicationError
+      if (applicationError) throw applicationError;
 
-      // Actualizar estado del trabajo
-      await updateJobStatus('in_progress')
+      // If accepting, update job status to in_progress
+      if (newStatus === 'accepted') {
+        const { error: jobError } = await supabase
+          .from('job_listings')
+          .update({ status: 'in_progress' })
+          .eq('id', jobId);
 
-      onStatusChange()
+        if (jobError) throw jobError;
+      }
+
+      onStatusChange();
     } catch (error) {
-      console.error('Error accepting application:', error)
+      console.error('Error updating status:', error);
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
+  };
+
+  if (currentStatus !== 'pending') {
+    return null;
   }
 
   return (
     <div className="flex gap-2">
       <button
-        onClick={handleAccept}
-        disabled={isProcessing || isUpdating || currentStatus !== 'pending'}
-        className={`px-3 py-1 rounded-md text-sm font-medium ${
-          currentStatus === 'pending'
-            ? 'bg-green-600 text-white hover:bg-green-700'
-            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-        }`}
+        onClick={() => handleStatusUpdate('accepted')}
+        disabled={isProcessing}
+        className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 disabled:opacity-50"
       >
-        {isProcessing || isUpdating ? 'Processing...' : 'Accept'}
+        <Check className="h-4 w-4 mr-1" />
+        Accept
       </button>
-      {/* Otros botones de acción */}
+      <button
+        onClick={() => handleStatusUpdate('rejected')}
+        disabled={isProcessing}
+        className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 disabled:opacity-50"
+      >
+        <X className="h-4 w-4 mr-1" />
+        Reject
+      </button>
     </div>
-  )
-} 
+  );
+}
