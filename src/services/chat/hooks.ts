@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/lib/AuthProvider';
 import { ChatMessage, Chat } from './types';
 import * as chatApi from './api';

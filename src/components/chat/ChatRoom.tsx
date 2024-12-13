@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '@/lib/AuthProvider';
-import { useChat } from '@/services/chatService/hooks';
+import { useChat } from '@/services/chat';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
 
@@ -13,9 +13,7 @@ export function ChatRoom() {
     messages,
     loading,
     error,
-    sendMessage,
-    hasMore,
-    loadMoreMessages
+    sendMessage
   } = useChat(chatId || '');
 
   useEffect(() => {
@@ -43,13 +41,11 @@ export function ChatRoom() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-white rounded-lg shadow-sm">
       <div className="flex-1 overflow-y-auto p-4">
         <MessageList
           messages={messages}
           userId={user.id}
-          hasMore={hasMore}
-          onLoadMore={loadMoreMessages}
         />
         <div ref={messagesEndRef} />
       </div>
