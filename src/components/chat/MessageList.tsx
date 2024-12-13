@@ -1,28 +1,25 @@
 import { useRef, useEffect } from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageListProps, ChatMessage } from '@/services/types/chat.types';
-import { MessageItem } from './MessageItem';
+import { ChatMessage } from '@/services/types/chat.types';
 
-export function MessageList({ 
-  messages, 
-  userId, 
-  hasMore, 
-  onLoadMore,
-  isLoading 
-}: MessageListProps) {
+interface MessageListProps {
+  messages: ChatMessage[];
+  userId: string;
+  hasMore?: boolean;
+  onLoadMore?: () => void;
+}
+
+export function MessageList({ messages, userId, hasMore, onLoadMore }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadTriggerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Scroll to bottom on new messages
-    if (!isLoading && messagesEndRef.current) {
+    if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, isLoading]);
+  }, [messages]);
 
   useEffect(() => {
-    if (!hasMore || isLoading) return;
+    if (!hasMore || !onLoadMore) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -33,41 +30,39 @@ export function MessageList({
       { threshold: 0.5 }
     );
 
-    if (loadTriggerRef.current) {
-      observer.observe(loadTriggerRef.current);
+    if (observerRef.current) {
+      observerRef.current.disconnect();
     }
 
     observerRef.current = observer;
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [hasMore, onLoadMore, isLoading]);
+    return () => observer.disconnect();
+  }, [hasMore, onLoadMore]);
 
   return (
-    <ScrollArea className="flex-1 p-4">
-      {/* Load More Trigger */}
-      {hasMore && (
-        <div ref={loadTriggerRef} className="h-8 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+    <div className="space-y-4">
+      {messages.map((message) => (
+        <div
+          key={message.id}
+          className={`flex ${message.sender_id === userId ? 'justify-end' : 'justify-start'}`}
+        >
+          <div
+            className={`max-w-[70%] rounded-lg px-4 py-2 ${
+              message.sender_id === userId
+                ? 'bg-primary text-white'
+                : 'bg-gray-100 text-gray-900'
+            }`}
+          >
+            <p className="text-sm font-medium mb-1">
+              {message.sender_id === userId ? 'You' : message.sender_name}
+            </p>
+            <p className="text-sm break-words">{message.content}</p>
+            <p className="text-xs mt-1 opacity-75">
+              {new Date(message.created_at).toLocaleTimeString()}
+            </p>
+          </div>
         </div>
-      )}
-
-      <div className="space-y-4">
-        {messages.map((message: ChatMessage) => (
-          <MessageItem
-            key={message.id}
-            message={message}
-            isOwnMessage={message.sender_id === userId}
-            showTimestamp={true}
-            onDelete={() => {/* Implementar eliminación de mensajes */}}
-            onEdit={(content) => {/* Implementar edición de mensajes */}}
-          />
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-    </ScrollArea>
+      ))}
+      <div ref={messagesEndRef} />
+    </div>
   );
 }

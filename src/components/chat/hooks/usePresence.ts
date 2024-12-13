@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/lib/AuthProvider';
+import { useProfile } from '@/lib/useProfile';
 
 interface PresenceUser {
   user_id: string;
-  profile?: {
+  profile: {
     full_name: string;
   };
 }
@@ -13,9 +15,13 @@ interface OnlineUsers {
 }
 
 export function usePresence() {
+  const { user } = useAuth();
+  const { profile } = useProfile();
   const [onlineUsers, setOnlineUsers] = useState<OnlineUsers>({});
 
   useEffect(() => {
+    if (!user || !profile) return;
+
     const channel = supabase.channel('online-users')
       .on('presence', { event: 'sync' }, () => {
         const state = channel.presenceState<PresenceUser>();
@@ -33,7 +39,10 @@ export function usePresence() {
       .subscribe(async (status) => {
         if (status === 'SUBSCRIBED') {
           await channel.track({
-            user_id: supabase.auth.getUser().then(({ data }) => data.user?.id),
+            user_id: user.id,
+            profile: {
+              full_name: profile.full_name
+            },
             online_at: new Date().toISOString(),
           });
         }
@@ -42,7 +51,7 @@ export function usePresence() {
     return () => {
       channel.unsubscribe();
     };
-  }, []);
+  }, [user, profile]);
 
   return { onlineUsers };
 }

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { JobApplication, JobListing } from '../../lib/types';
 import { X, Check, XCircle, MessageSquare } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 
 interface JobApplicationsListModalProps {
   job: JobListing;
@@ -68,7 +68,7 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
       if (newStatus === 'accepted') {
         const application = applications.find(app => app.id === applicationId);
         if (application) {
-          const { error: chatError } = await supabase
+          const { data: chatData, error: chatError } = await supabase
             .from('chats')
             .insert([
               {
@@ -76,29 +76,16 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
                 business_id: job.business_id,
                 freelancer_id: application.freelancer_id
               }
-            ]);
+            ])
+            .select()
+            .single();
 
           if (chatError) throw chatError;
+          if (chatData) {
+            navigate(`/chat/${chatData.id}`);
+            return;
+          }
         }
-      }
-
-      // Create notification for the freelancer
-      const application = applications.find(app => app.id === applicationId);
-      if (application) {
-        await supabase
-          .from('notifications')
-          .insert([
-            {
-              user_id: application.freelancer_id,
-              type: 'application_status',
-              title: `Application ${newStatus}`,
-              message: `Your application for "${job.title}" has been ${newStatus}`,
-              data: {
-                jobId: job.id,
-                applicationId: applicationId,
-              },
-            },
-          ]);
       }
 
       setApplications(applications.map(app => 
@@ -112,17 +99,20 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
 
   const handleStartChat = async (applicationId: string) => {
     try {
-      const { data: chat } = await supabase
+      const { data: chat, error } = await supabase
         .from('chats')
         .select('id')
         .eq('job_application_id', applicationId)
         .single();
 
+      if (error) throw error;
       if (chat) {
         navigate(`/chat/${chat.id}`);
+        onClose();
       }
     } catch (error) {
       console.error('Error finding chat:', error);
+      setError('Failed to open chat');
     }
   };
 
@@ -200,7 +190,7 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
                   ) : application.status === 'accepted' && (
                     <button
                       onClick={() => handleStartChat(application.id)}
-                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-primary"
+                      className="inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
                     >
                       <MessageSquare className="h-4 w-4 mr-1" />
                       Chat

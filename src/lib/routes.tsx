@@ -12,6 +12,7 @@ import { MyJobs } from '@/pages/MyJobs';
 import { FreelancerProfile } from '@/pages/FreelancerProfile';
 import { FreelancerDirectory } from '@/pages/FreelancerDirectory';
 import { Chats } from '@/pages/Chats';
+import { ChatRoom } from '@/components/chat/ChatRoom';
 import { Layout } from '@/components/Layout';
 
 export const router = createBrowserRouter([
@@ -104,6 +105,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <Chats />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'chat/:chatId',
+        element: (
+          <ProtectedRoute>
+            <ChatRoom />
           </ProtectedRoute>
         )
       },
