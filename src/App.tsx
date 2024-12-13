@@ -15,6 +15,7 @@ import { FreelancerPublicProfile } from './components/freelancer/FreelancerPubli
 import { FreelancerDirectory } from './pages/FreelancerDirectory';
 import { FreelancerProfile } from './pages/FreelancerProfile';
 import { Chats } from './pages/Chats';
+import { Footer } from './components/Footer';
 
 function App() {
   return (
@@ -108,6 +109,7 @@ function App() {
               />
             </Routes>
           </main>
+          <Footer />
         </div>
       </Router>
     </AuthProvider>
