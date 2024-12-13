@@ -36,12 +36,13 @@ export function LandingPage() {
         <p className="mt-6 text-xl text-gray-500 max-w-3xl mx-auto">
           Connect with skilled professionals in your area or find local businesses looking for your expertise.
         </p>
-        <div className="mt-10">
+        
+        <div className="mt-12 text-center">
           <Link
-            to="/auth"
+            to={user ? "/dashboard" : "/auth"}
             className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
           >
-            Get Started
+            {user ? "Dashboard" : "Get Started"}
           </Link>
         </div>
       </div>
@@ -174,20 +175,33 @@ export function LandingPage() {
       </div>
 
       {/* CTA Section */}
-      <div className="text-center py-16 sm:py-24">
-        <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-          <span className="block">Ready to get started?</span>
-          <span className="block text-primary">Join our community today.</span>
-        </h2>
-        <div className="mt-8 flex justify-center">
-          <Link
-            to="/auth"
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover"
-          >
-            Sign Up Now
-          </Link>
-        </div>
-      </div>
+      {user ? (
+                  <>
+                    <div className="text-center py-16 sm:py-24">
+                      <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                        <p>
+                        Thank you for beign a part of <span className="text-primary">Candid Socials</span>
+                        </p>
+                      </h2>
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-16 sm:py-24">
+                  <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+                    <span className="block">Ready to get started?</span>
+                    <span className="block text-primary">Join our community today.</span>
+                  </h2>
+                  <div className="mt-8 flex justify-center">
+                    <Link
+                      to="/auth"
+                      className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover"
+                    >
+                      Sign Up Now
+                    </Link>
+                  </div>
+                </div>
+                )}
+      
 
       {selectedJob && (
         <JobApplicationModal
