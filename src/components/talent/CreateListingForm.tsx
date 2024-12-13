@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../lib/AuthProvider';
 import { CATEGORIES } from '../../lib/types';
 
-export function CreateListingForm() {
+interface CreateListingFormProps {
+  onClose?: () => void;
+}
+
+export function CreateListingForm({ onClose }: CreateListingFormProps) {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -33,7 +35,7 @@ export function CreateListingForm() {
       ]);
 
       if (error) throw error;
-      navigate('/browse');
+      onClose?.(); // Call onClose instead of navigating
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -43,6 +45,7 @@ export function CreateListingForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Rest of the form JSX remains exactly the same */}
       {error && (
         <div className="bg-red-50 text-red-700 p-4 rounded-md">
           {error}
