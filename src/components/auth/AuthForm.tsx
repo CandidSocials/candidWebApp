@@ -88,7 +88,19 @@ export function AuthForm() {
           
         navigate('/profile/setup');
       } else {
-        // ... rest of sign in code
+        // Sign in logic
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (signInError) throw signInError;
+
+        if (!signInData.user) {
+          throw new Error('Sign in failed');
+        }
+
+        navigate('/dashboard');
       }
     } catch (err) {
       console.error('Auth error:', err);
