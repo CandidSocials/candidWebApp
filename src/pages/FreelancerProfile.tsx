@@ -6,6 +6,8 @@ import { ReviewsList } from '../components/freelancer/ReviewsList'
 import { PortfolioList } from '../components/freelancer/PortfolioList'
 import { SkillsList } from '../components/freelancer/SkillsList'
 import { JobHistory } from '../components/freelancer/JobHistory'
+import { DirectOfferModal } from '../components/freelancer/DirectOfferModal'
+import { useProfile } from '../lib/useProfile'
 
 interface FreelancerProfile {
   user_id: string
@@ -25,9 +27,11 @@ interface FreelancerProfile {
 
 export function FreelancerProfile() {
   const { id } = useParams<{ id: string }>()
+  const { profile: currentUserProfile } = useProfile()
   const [profile, setProfile] = useState<FreelancerProfile | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showDirectOfferModal, setShowDirectOfferModal] = useState(false)
 
   useEffect(() => {
     fetchProfile()
@@ -65,6 +69,8 @@ export function FreelancerProfile() {
   if (loading) return <div>Loading...</div>
   if (error) return <div>Error: {error}</div>
   if (!profile) return <div>Profile not found</div>
+
+  const canSendDirectOffer = currentUserProfile?.role === 'business'
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -105,6 +111,15 @@ export function FreelancerProfile() {
           <Briefcase className="h-4 w-4 mr-2" />
           <span>${profile.hourly_rate}/hour</span>
         </div>
+
+        {canSendDirectOffer && (
+          <button
+            onClick={() => setShowDirectOfferModal(true)}
+            className="mt-6 w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-hover transition-colors"
+          >
+            Send Direct Offer
+          </button>
+        )}
       </div>
 
       {/* Skills Section */}
@@ -130,6 +145,17 @@ export function FreelancerProfile() {
         <h2 className="text-lg font-semibold text-gray-900 mb-4">Reviews</h2>
         <ReviewsList freelancerId={profile.user_id} />
       </div>
+
+      {showDirectOfferModal && (
+        <DirectOfferModal
+          freelancerId={profile.user_id}
+          freelancerName={profile.full_name}
+          onClose={() => setShowDirectOfferModal(false)}
+          onSuccess={() => {
+            setShowDirectOfferModal(false);
+          }}
+        />
+      )}
     </div>
   )
-} 
+}

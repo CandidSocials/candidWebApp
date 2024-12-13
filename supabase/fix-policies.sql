@@ -119,3 +119,58 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Grant execute permission to the authenticator
 GRANT EXECUTE ON FUNCTION public.update_user_presence() TO authenticator;
+
+
+-- fix the direct offer
+
+-- Drop existing policies
+DROP POLICY IF EXISTS "Freelancers can create applications" ON job_applications;
+DROP POLICY IF EXISTS "Users can view relevant applications" ON job_applications;
+DROP POLICY IF EXISTS "Users can update relevant applications" ON job_applications;
+
+-- Create new policies with proper permissions
+CREATE POLICY "Allow application creation"
+  ON job_applications FOR INSERT
+  WITH CHECK (
+    -- Allow freelancers to create applications
+    EXISTS (
+      SELECT 1 FROM user_profiles
+      WHERE user_id = auth.uid()
+      AND role = 'freelancer'
+    )
+    OR
+    -- Allow businesses to create applications for direct offers
+    EXISTS (
+      SELECT 1 FROM job_listings
+      WHERE job_listings.id = job_applications.job_id
+      AND job_listings.business_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Allow viewing relevant applications"
+  ON job_applications FOR SELECT
+  USING (
+    -- Freelancers can view their own applications
+    freelancer_id = auth.uid()
+    OR
+    -- Businesses can view applications for their jobs
+    EXISTS (
+      SELECT 1 FROM job_listings
+      WHERE job_listings.id = job_applications.job_id
+      AND job_listings.business_id = auth.uid()
+    )
+  );
+
+CREATE POLICY "Allow updating relevant applications"
+  ON job_applications FOR UPDATE
+  USING (
+    -- Freelancers can update their own applications
+    freelancer_id = auth.uid()
+    OR
+    -- Businesses can update applications for their jobs
+    EXISTS (
+      SELECT 1 FROM job_listings
+      WHERE job_listings.id = job_applications.job_id
+      AND job_listings.business_id = auth.uid()
+    )
+  );
