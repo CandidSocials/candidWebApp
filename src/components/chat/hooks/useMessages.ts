@@ -1,96 +1,99 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabase'
-import { Message } from '../types'
-import { useAuth } from '@/lib/AuthProvider'
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { Message } from '../types';
+import { useAuth } from '@/lib/AuthProvider';
 
-export function useMessages(chatId: string) {
-  const { user } = useAuth()
-  const [messages, setMessages] = useState<Message[]>([])
-  const [loading, setLoading] = useState(true)
+export function useMessages(roomId: string | null) {
+  const { user } = useAuth();
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchMessages()
-    const unsubscribe = subscribeToMessages()
-    return () => {
-      unsubscribe()
+    if (!roomId || !user) {
+      setMessages([]);
+      setLoading(false);
+      return;
     }
-  }, [chatId])
 
-  const fetchMessages = async () => {
-    try {
-      const { data } = await supabase
-        .from('chat_messages_with_sender')
-        .select('*')
-        .eq('chat_id', chatId)
-        .order('created_at', { ascending: true })
+    async function fetchMessages() {
+      try {
+        const { data, error: fetchError } = await supabase
+          .from('chat_messages')
+          .select(`
+            *,
+            sender:user_profiles!inner(full_name)
+          `)
+          .eq('room_id', roomId)
+          .order('created_at', { ascending: true });
 
-      if (data) {
-        setMessages(data)
-        await markMessagesAsRead(data)
+        if (fetchError) throw fetchError;
+        setMessages(data || []);
+      } catch (err) {
+        console.error('Error fetching messages:', err);
+        setError(err instanceof Error ? err.message : 'Failed to fetch messages');
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error('Error fetching messages:', error)
-    } finally {
-      setLoading(false)
     }
-  }
 
-  const markMessagesAsRead = async (messages: Message[]) => {
-    const unreadMessages = messages.filter(
-      msg => !msg.read && msg.sender_id !== user?.id
-    )
+    fetchMessages();
 
-    if (unreadMessages.length > 0) {
-      await supabase
-        .from('chat_messages')
-        .update({ read: true })
-        .in('id', unreadMessages.map(msg => msg.id))
-    }
-  }
-
-  const subscribeToMessages = () => {
+    // Subscribe to new messages
     const subscription = supabase
-      .channel(`chat:${chatId}`)
+      .channel(`room:${roomId}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'chat_messages',
-          filter: `chat_id=eq.${chatId}`,
+          filter: `room_id=eq.${roomId}`,
         },
-        () => {
-          fetchMessages()
+        async (payload) => {
+          // Fetch the sender's profile for the new message
+          const { data: senderData } = await supabase
+            .from('user_profiles')
+            .select('full_name')
+            .eq('user_id', payload.new.sender_id)
+            .single();
+
+          const newMessage = {
+            ...payload.new,
+            sender: senderData
+          } as Message;
+
+          setMessages(prev => [...prev, newMessage]);
         }
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      subscription.unsubscribe()
-    }
-  }
+      subscription.unsubscribe();
+    };
+  }, [roomId, user]);
 
   const sendMessage = async (content: string) => {
-    if (!content.trim() || !user) return
+    if (!roomId || !content.trim() || !user) return;
 
     try {
-      await supabase
+      const { error: sendError } = await supabase
         .from('chat_messages')
         .insert([
           {
-            chat_id: chatId,
+            room_id: roomId,
             sender_id: user.id,
             content: content.trim(),
-          },
-        ])
-    } catch (error) {
-      console.error('Error sending message:', error)
-    }
-  }
+            type: 'text'
+          }
+        ]);
 
-  return {
-    messages,
-    loading,
-    sendMessage
-  }
+      if (sendError) throw sendError;
+    } catch (err) {
+      console.error('Error sending message:', err);
+      setError(err instanceof Error ? err.message : 'Failed to send message');
+    }
+  };
+
+  return { messages, loading, error, sendMessage };
 }

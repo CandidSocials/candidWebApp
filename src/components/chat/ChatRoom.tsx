@@ -1,45 +1,35 @@
-import { useRef, useEffect } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { useMessages } from './hooks/useMessages'
-import { MessageItem } from './MessageItem'
-import { MessageInput } from './MessageInput'
-import { useAuth } from '@/lib/AuthProvider'
-import { ChatRoomProps } from './types'
+import { useEffect, useRef } from 'react';
+import { useAuth } from '@/lib/AuthProvider';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { MessageInput } from './MessageInput';
+import { MessageList } from './MessageList';
+import { useMessages } from './hooks/useMessages';
 
-export function ChatRoom({ chatId, otherUserName }: ChatRoomProps) {
-  const { user } = useAuth()
-  const { messages, loading, sendMessage } = useMessages(chatId)
-  const scrollAreaRef = useRef<HTMLDivElement>(null)
+interface ChatRoomProps {
+  chatId: string;
+}
+
+export function ChatRoom({ chatId }: ChatRoomProps) {
+  const { user } = useAuth();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { messages, loading, error, sendMessage } = useMessages(chatId);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
     }
-  }, [messages])
+  }, [messages]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
+  if (!user) return null;
+  if (loading) return <div className="flex-1 flex items-center justify-center">Loading...</div>;
+  if (error) return <div className="flex-1 flex items-center justify-center text-red-500">{error}</div>;
 
   return (
     <div className="flex flex-col h-full">
-      <ScrollArea className="flex-1 p-4">
-        <div className="space-y-4">
-          {messages.map((message) => (
-            <MessageItem
-              key={message.id}
-              message={message}
-              isOwnMessage={message.sender_id === user?.id}
-              otherUserName={otherUserName}
-            />
-          ))}
-        </div>
+      <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
+        <MessageList messages={messages} userId={user.id} />
       </ScrollArea>
       <MessageInput onSend={sendMessage} />
     </div>
-  )
+  );
 }

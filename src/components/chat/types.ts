@@ -1,29 +1,33 @@
 export interface Message {
-  id: string
-  sender_id: string
-  content: string
-  created_at: string
-  sender_full_name: string
-  read: boolean
+  id: string;
+  room_id: string;
+  sender_id: string;
+  content: string;
+  type: 'text' | 'image' | 'file';
+  created_at: string;
+  updated_at: string;
+  is_edited: boolean;
+  sender?: {
+    full_name: string;
+  };
 }
 
-export interface ChatProps {
-  chatId: string
-  otherUserName: string
+export interface ChatRoom {
+  id: string;
+  name: string;
+  type: 'direct' | 'group';
+  updated_at: string;
+  participants: Array<{
+    user_id: string;
+    profile: {
+      full_name: string;
+    };
+  }>;
 }
 
-export interface ChatModalProps {
-  chatId: string
-  jobTitle: string
-  otherUserName: string
-}
-
-export interface MessageItemProps {
-  message: Message
-  isOwnMessage: boolean
-  otherUserName: string
-}
-
-export interface MessageInputProps {
-  onSend: (message: string) => Promise<void>
+export interface ChatParticipant {
+  user_id: string;
+  profile: {
+    full_name: string;
+  };
 }

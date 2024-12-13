@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthForm } from './components/auth/AuthForm';
 import { Navigation } from './components/Navigation';
@@ -12,11 +11,10 @@ import { ProfileSetup } from './pages/ProfileSetup';
 import { Profile } from './pages/Profile';
 import { LandingPage } from './pages/LandingPage';
 import { MyJobs } from './pages/MyJobs';
-import { FreelancerPublicProfile } from './components/freelancer/FreelancerPublicProfile'
-import { FreelancerDirectory } from './pages/FreelancerDirectory'
-import { FreelancerProfile } from './pages/FreelancerProfile'
-import { Chats } from './pages/Chats'
-import { ChatRoom } from './components/chat/ChatRoom'
+import { FreelancerPublicProfile } from './components/freelancer/FreelancerPublicProfile';
+import { FreelancerDirectory } from './pages/FreelancerDirectory';
+import { FreelancerProfile } from './pages/FreelancerProfile';
+import { Chats } from './pages/Chats';
 
 function App() {
   return (
@@ -105,14 +103,6 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Chats />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/chat/:chatId"
-                element={
-                  <ProtectedRoute>
-                    <ChatRoom />
                   </ProtectedRoute>
                 }
               />
