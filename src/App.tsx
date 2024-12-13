@@ -16,102 +16,106 @@ import { FreelancerDirectory } from './pages/FreelancerDirectory';
 import { FreelancerProfile } from './pages/FreelancerProfile';
 import { Chats } from './pages/Chats';
 import { Footer } from './components/Footer';
+import { ChatProvider } from './context/ChatContext'; // Importa el ChatProvider
+import ChatWindow from './components/ChatWindow';
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <div className="min-h-screen bg-gray-50">
-          <Navigation />
-          <main className="container mx-auto px-4 py-8">
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/auth" element={<AuthForm />} />
-              <Route
-                path="/role-selection"
-                element={
-                  <ProtectedRoute>
-                    <RoleSelection />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile"
-                element={
-                  <ProtectedRoute>
-                    <Profile />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/profile/setup"
-                element={
-                  <ProtectedRoute>
-                    <ProfileSetup />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/jobs"
-                element={
-                  <ProtectedRoute>
-                    <BrowseJobs />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/my-jobs"
-                element={
-                  <ProtectedRoute>
-                    <MyJobs />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/talent"
-                element={
-                  <ProtectedRoute>
-                    <BrowseTalent />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/freelancer/:id"
-                element={
-                  <ProtectedRoute>
-                    <FreelancerProfile />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/freelancers"
-                element={
-                  <ProtectedRoute>
-                    <FreelancerDirectory />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/chats"
-                element={
-                  <ProtectedRoute>
-                    <Chats />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </main>
-          <Footer />
-        </div>
-      </Router>
+      <ChatProvider> {/* Aquí envuelves tu aplicación con el ChatProvider */}
+        <Router>
+          <div className="min-h-screen bg-gray-50">
+            <Navigation />
+            <main className="container mx-auto px-4 py-8">
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/auth" element={<AuthForm />} />
+                <Route
+                  path="/role-selection"
+                  element={
+                    <ProtectedRoute>
+                      <RoleSelection />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile/setup"
+                  element={
+                    <ProtectedRoute>
+                      <ProfileSetup />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/jobs"
+                  element={
+                    <ProtectedRoute>
+                      <BrowseJobs />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-jobs"
+                  element={
+                    <ProtectedRoute>
+                      <MyJobs />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/talent"
+                  element={
+                    <ProtectedRoute>
+                      <BrowseTalent />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/freelancer/:id"
+                  element={
+                    <ProtectedRoute>
+                      <FreelancerProfile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/freelancers"
+                  element={
+                    <ProtectedRoute>
+                      <FreelancerDirectory />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chats"
+                  element={
+                    <ProtectedRoute>
+                      <Chats />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      </ChatProvider>
     </AuthProvider>
   );
 }
