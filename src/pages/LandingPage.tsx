@@ -27,12 +27,14 @@ export function LandingPage() {
   }, [])
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-full px-4 sm:px-6 lg:px-8 items-center flex flex-col">
+      
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className=" max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-1 mb-[100px] md:mb-32 flex items-center flex-col ">
+      <img src="src\static\LandingPage\hero-bg.png" className=' absolute w-full object-contain z-[-10] ' />
         <div className="flex flex-col lg:flex-row items-center justify-between py-16 sm:py-24 gap-12">
           {/* Left side content */}
-          <div className="lg:w-1/2 space-y-6 mb-32">
+          <div className="lg:w-1/2 space-y-6 mb-32 z-30">
             <h1 className="text-5xl sm:text-6xl font-normal text-primary tracking-tight ">
               Find Local Talent Near You At Candid App
             </h1>
@@ -63,7 +65,7 @@ export function LandingPage() {
           </div>
           
           {/* Right side images */}
-          <div className="lg:w-1/2 relative mt-12 lg:mt-0">
+          <div className="lg:w-1/2 relative mt-12 lg:mt-0 z-1">
             <div className="relative z-10 grid grid-cols-2 gap-4">
               <div className="rounded-full h-fit mt-24">
                 <img src="src\static\LandingPage\hero-2.webp" alt="Photographer" className="rounded-lg" />
@@ -73,196 +75,146 @@ export function LandingPage() {
               </div>
             </div>
             {/* Background decoration */}
-            <div className="absolute -z-10 top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-[#E6F7F4] rounded-full opacity-20"></div>
+            <div className="absolute -z-10 top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-transparent rounded-full opacity-20"></div>
           </div>
         </div>
 
         {/* Service Icons */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12">
-          <div className="text-center space-y-4">
-            <div className="inline-block p-4 bg-primary/10 rounded-full">
-              <Users className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="font-semibold">Book the Best Photographers for Unforgettable Moments</h3>
+        <div className="w-[80%] grid grid-cols-1 md:grid-cols-3 gap-8 py-12 z-[10] bg-white mt-[-180px] rounded-xl">
+          <div className="text-left space-y-4  z-1">
+            <img src="src\static\LandingPage\hero-item-1.png" className='w-12 h-12' />
+            <h3 className="text-gray-700 font-semibold">Book the Best Photographers for Unforgettable Moments</h3>
           </div>
-          <div className="text-center space-y-4">
-            <div className="inline-block p-4 bg-primary/10 rounded-full">
-              <Video className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="font-semibold">Hire the Top Videographers for Every Occasion</h3>
+          
+          <div className="text-left space-y-4  z-1">
+            <img src="src\static\LandingPage\hero-item-2.png" className='w-12 h-12' />
+            <h3 className="text-gray-700 font-semibold">Hire the Top Videographers for Every Occasion</h3>
           </div>
-          <div className="text-center space-y-4">
-            <div className="inline-block p-4 bg-primary/10 rounded-full">
-             <Camera className="h-8 w-8 text-primary" />
-            </div>
-            <h3 className="font-semibold">Book the Best Photographers for Unforgettable Moments</h3>
+
+          <div className="text-left space-y-4  z-1">
+            <img src="src\static\LandingPage\hero-item-3.png" className='w-12 h-12' />
+            <h3 className="text-gray-700 font-semibold">Book the Best Photographers for Unforgettable Moments</h3>
           </div>
         </div>
       </div>
+      {/* How it works */}
+        <div className='flex fles-col w-full mx-24 items-center justify-end mb-40'>
+          <div className='flex flex-col gap-12 px-12 w-[35%] absolute left-24 bg-white z-10  py-10 rounded-2xl'>
+            {/* Step 1 */}
+            <h3 className='text-[#0A2B14] text-2xl font-semibold' >How it works</h3>
+            <div className='flex flex-row gap-4 items-center'>
+              <img src="src\static\LandingPage\num-1.png" className='w-12 h-12' />
+              <p className="text-[#0A2B14] text-base font-semibold">List Your Creative Task: Describe the content you need—be it photography, videography, or editing.</p>
+            </div>
+             {/* Step 2 */}
+            <div className='flex flex-row gap-4 items-center'>
+              <img src="src\static\LandingPage\num-2.png" className='w-12 h-12' />
+              <p className="text-[#0A2B14] text-base font-semibold">Receive Offers: Get personalized bids from talented local creatives.</p>
+            </div>
+             {/* Step 3 */}
+            <div className='flex flex-row gap-4 items-center'>
+              <img src="src\static\LandingPage\num-3.png" className='w-12 h-12' />
+              <p className="text-[#0A2B14] text-base font-semibold">Choose and Collaborate: Pick your creative partner, communicate directly, and bring your vision to life.</p>
+            </div>
+          </div>
+          <img src="src/static/LandingPage/how-it-works.png" className='w-[85%] h-auto rounded-lg' />
+        </div>
 
-      {/* Features Section */}
-      <div className="py-16 sm:py-24 bg-white rounded-xl shadow-sm">
-        <div className="max-w-xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-          <h2 className="sr-only">Features</h2>
-          <div className="grid grid-cols-1 gap-y-12 lg:grid-cols-3 lg:gap-x-8">
-            <div className="text-center">
-              <div className="flex justify-center">
-                <MapPin className="h-12 w-12 text-primary" />
-              </div>
-              <h3 className="mt-6 text-lg font-medium text-gray-900">Local Connections</h3>
-              <p className="mt-2 text-base text-gray-500">
-                Find talented professionals right in your neighborhood, making collaboration easier.
-              </p>
+        {/* The local content solution... */}
+        <div className="flex flex-col w-full mb-12 items-left justify-start gap-0 h-fit">
+        <img src="src\static\LandingPage\hero-bg.png" className=' left-0 absolute w-full h-auto object-contain overflow-hidden z-[-10] ' />
+          <h3 className='w-1/2 text-4xl mb-12'>
+            The <span className="text-primary">local</span> content solution for businesses & creatives
+          </h3>
+          <div className='w-full flex flex-row gap-0 mb-24'>
+          
+          <div className="w-full grid grid-cols-2 gap-8">
+            <div>
+              <img src="src\static\LandingPage\check.png" className="w-4 h-4" />
+              <h2 className="text-2xl font-semibold">Only Local Creatives</h2>
+              <p className="font-normal">Connect with talented professionals in your area who truly "get it"—the local trends, culture, and vibe. Build real connections, face-to-face, with creatives who bring your vision to life in ways only locals can.</p>
+            </div>
+            
+            <div>
+              <img src="src\static\LandingPage\check.png" className="w-4 h-4" />
+              <h2 className="text-2xl font-semibold">Get Multiple Offers</h2>
+              <p className="font-normal">Request bids directly from freelancers who capture your attention, or compare multiple offers to find the perfect fit for your project’s needs and budget.</p>
             </div>
 
-            <div className="text-center">
-              <div className="flex justify-center">
-                <Users className="h-12 w-12 text-primary" />
-              </div>
-              <h3 className="mt-6 text-lg font-medium text-gray-900">Verified Professionals</h3>
-              <p className="mt-2 text-base text-gray-500">
-                Connect with verified local talent and businesses you can trust.
-              </p>
+            <div>
+              <img src="src\static\LandingPage\check.png" className="w-4 h-4" />
+              <h2 className="text-2xl font-semibold">Ratings & Reviews</h2>
+              <p className="font-normal">Make confident choices based on honest feedback from previous clients.</p>
             </div>
 
-            <div className="text-center">
-              <div className="flex justify-center">
-                <Shield className="h-12 w-12 text-primary" />
-              </div>
-              <h3 className="mt-6 text-lg font-medium text-gray-900">Secure Platform</h3>
-              <p className="mt-2 text-base text-gray-500">
-                Your data and transactions are protected with enterprise-grade security.
-              </p>
+            <div>
+              <img src="src\static\LandingPage\check.png" className="w-4 h-4" />
+              <h2 className="text-2xl font-semibold">Everything In One Place</h2>
+              <p className="font-normal">Manage everything seamlessly—review bids, communicate with creatives, and make secure payments, all on one platform.</p>
             </div>
+          </div>
+          <div className='w-full'>
+            <img src="src\static\LandingPage\placeholder.png" />
+          </div>
+          
+        </div>
+          <button className='flex mt-[-50px] bg-primary w-fit px-8 h-12 justify-center items-center rounded-lg hover:bg-primary-hover'> <h3 className='text-white font-semibold text-lg'>Try Now</h3> </button>
+        </div>
+       
+
+        <div className='w-full flex flex-col mt-12 mb-12 gap-12 bg-white'>
+          <h3 className="w-1/2 text-4xl mb-12">Make it all happen <span className='text-primary'>locally.</span></h3>
+
+          <div className='grid grid-cols-4 w-full gap-32 justify-center items-center'>
+            {/* Number 1 */}
+            <div className='flex flex-col gap-6'>
+              <img src="src\static\LandingPage\char-1.png" className='w-12 h-12'/>
+              <h3 className="text-[#404145]">
+                Access Local Talent: Tap into a dedicated pool of skilled creatives in your community who understand your unique needs and vision.
+              </h3>
+            </div>
+            {/* Number 2 */}
+            <div className='flex flex-col gap-6'>
+              <img src="src\static\LandingPage\char-2.png" className='w-12 h-12'/>
+              <h3 className="text-[#404145]">
+                Simple and Easy-to-Use: A user-friendly platform designed to make finding, hiring, and working with local professionals as straightforward as possible.
+              </h3>
+            </div>
+            {/* Number 3 */}
+            <div className='flex flex-col gap-6'>
+              <img src="src\static\LandingPage\char-3.png" className='w-12 h-12'/>
+              <h3 className="text-[#404145]">
+                Quick Turnaround: Collaborate with nearby talent for faster communication, quick delivery, and real-time collaboration.
+              </h3>
+            </div>
+            {/* Number 4 */}
+            <div className='flex flex-col gap-6'>
+              <img src="src\static\LandingPage\char-4.png" className='w-12 h-12'/>
+              <h3 className="text-[#404145]">
+              Only pay when you’re happy
+              </h3>
+            </div>
+          </div>
+
+
+
+          <button className='flex bg-primary w-fit px-8 h-12 justify-center items-center rounded-lg hover:bg-primary-hover'> <h3 className='text-white font-semibold text-lg'>Join Now</h3> </button>
+        </div>
+    
+        {/* CTA */}
+        <div className="grid grid-cols-2 h-fit  mb-12 rounded-full">
+          <div className="relative bg-cover h-full bg-center bg-no-repeat object-left overflow-hidden rounded-tl-xl rounded-bl-xl" style={{ backgroundImage: "url('src\\/static\\/LandingPage\\/CTA-1.png')" }}>
+            <div className="relative z-10 flex flex-col justify-center items-start h-full px-12 gap-8 rounded-xl">
+              <h1 className="text-5xl font-normal text-white mb-4">Your Next Big Idea Starts Here, Locally.</h1>
+              <a href="/auth" className="bg-white text-black font-medium py-3 px-6 rounded-md hover:bg-gray-200 transition-colors">
+                JOIN CANDID
+              </a>
+            </div>
+          </div>
+          <div className="bg-gray-100 flex items-center justify-center">
+            <img src="src\static\LandingPage\CTA-2.png" />
           </div>
         </div>
       </div>
-
-      {/* Nueva sección de trabajos recientes */}
-      <div className="py-16 sm:py-24">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-            Recent Jobs
-          </h2>
-          <p className="mt-4 text-xl text-gray-500">
-            Explore the latest opportunities available on our platform
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recentJobs.map((job) => (
-            <div key={job.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-              <div className="p-6">
-                <div className="flex justify-between items-start">
-                  <h3 className="text-xl font-semibold text-gray-900">{job.title}</h3>
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-primary">
-                    {job.category}
-                  </span>
-                </div>
-                
-                {user ? (
-                  <>
-                    <p className="mt-2 text-gray-600 line-clamp-3">{job.description}</p>
-                    <div className="mt-4 space-y-2">
-                      <div className="flex items-center text-gray-500">
-                        <MapPin className="h-4 w-4 mr-2" />
-                        {job.location}
-                      </div>
-                      <div className="flex items-center text-gray-500">
-                        <DollarSign className="h-4 w-4 mr-2" />
-                        ${job.budget}
-                      </div>
-                      <div className="flex items-center text-gray-500">
-                        <Clock className="h-4 w-4 mr-2" />
-                        {new Date(job.created_at).toLocaleDateString()}
-                      </div>
-                    </div>
-                    <div className="mt-4">
-                      <div className="flex flex-wrap gap-2">
-                        {job.skills_required.map((skill) => (
-                          <span
-                            key={skill}
-                            className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                          >
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setSelectedJob(job)}
-                      className="mt-6 w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-rimary transition-colors"
-                    >
-                      View Details
-                    </button>
-                  </>
-                ) : (
-                  <div className="mt-4">
-                    <p className="text-gray-600 line-clamp-2">
-                      {job.description.substring(0, 100)}...
-                    </p>
-                    <div className="mt-6 flex items-center justify-center py-8 bg-gray-50 rounded-lg">
-                      <Lock className="h-5 w-5 text-gray-400 mr-2" />
-                      <Link
-                        to="/auth"
-                        className="text-primary hover:text-primary-hover font-medium"
-                      >
-                        Sign in to view details
-                      </Link>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-12 text-center">
-          <Link
-            to={user ? "/jobs" : "/auth"}
-            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
-          >
-            {user ? "View All Jobs" : "Sign Up to See More"}
-          </Link>
-        </div>
-      </div>
-
-      {/* CTA Section */}
-      {user ? (
-                  <>
-                    <div className="text-center py-16 sm:py-24">
-                      <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                        <p>
-                        Thank you for beign a part of <span className="text-primary">Candid Socials</span>
-                        </p>
-                      </h2>
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-center py-16 sm:py-24">
-                  <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
-                    <span className="block">Ready to get started?</span>
-                    <span className="block text-primary">Join our community today.</span>
-                  </h2>
-                  <div className="mt-8 flex justify-center">
-                    <Link
-                      to="/auth"
-                      className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-hover"
-                    >
-                      Sign Up Now
-                    </Link>
-                  </div>
-                </div>
-                )}
-      
-
-      {selectedJob && (
-        <JobApplicationModal
-          job={selectedJob}
-          onClose={() => setSelectedJob(null)}
-          onSuccess={() => setSelectedJob(null)}
-        />
-      )}
-    </div>
   );
 }
