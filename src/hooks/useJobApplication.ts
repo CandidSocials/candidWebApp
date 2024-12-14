@@ -11,27 +11,59 @@ export function useJobApplication(jobId: string) {
   useEffect(() => {
     if (!user || !jobId) return;
 
-    async function fetchApplication() {
+    const fetchApplication = async () => {
       try {
-        const { data, error } = await supabase
+        // Primero obtenemos la aplicación básica
+        const { data: appData, error: appError } = await supabase
           .from('job_applications')
-          .select('*, job_listings(status)')
+          .select('*')
           .eq('job_id', jobId)
-          .eq('freelancer_id', user.id)
+          .eq('freelancer_id', user?.id)
           .maybeSingle();
 
-        if (error) throw error;
-        setApplication(data);
+        if (appError) throw appError;
+
+        if (appData) {
+          // Luego obtenemos los detalles del trabajo y la empresa
+          const { data: jobData, error: jobError } = await supabase
+            .from('job_listings')
+            .select(`
+              id,
+              title,
+              description,
+              budget,
+              location,
+              category,
+              skills_required,
+              status,
+              business_id,
+              business:user_profiles (
+                full_name,
+                company_name
+              )
+            `)
+            .eq('id', jobId)
+            .single();
+
+          if (jobError) throw jobError;
+
+          // Combinamos los datos
+          setApplication({
+            ...appData,
+            job: jobData
+          });
+        } else {
+          setApplication(null);
+        }
       } catch (error) {
         console.error('Error fetching application:', error);
+        setApplication(null);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
-    fetchApplication();
-
-    // Subscribe to changes
+    // Suscribirse a cambios en tiempo real
     const subscription = supabase
       .channel('job_application_changes')
       .on(
@@ -40,13 +72,16 @@ export function useJobApplication(jobId: string) {
           event: '*',
           schema: 'public',
           table: 'job_applications',
-          filter: `job_id=eq.${jobId},freelancer_id=eq.${user.id}`,
+          filter: `job_id=eq.${jobId}&freelancer_id=eq.${user.id}`
         },
-        () => {
+        (payload) => {
+          console.log('Cambio detectado:', payload);
           fetchApplication();
         }
       )
       .subscribe();
+
+    fetchApplication();
 
     return () => {
       subscription.unsubscribe();

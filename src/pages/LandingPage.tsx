@@ -12,19 +12,46 @@ export function LandingPage() {
   const [selectedJob, setSelectedJob] = useState<JobListing | null>(null)
 
   useEffect(() => {
+    console.log('LandingPage useEffect triggered');
     async function fetchRecentJobs() {
-      const { data } = await supabase
-        .from('job_listings')
-        .select('*')
-        .eq('status', 'open')
-        .order('created_at', { ascending: false })
-        .limit(6)
+      console.log('Iniciando fetchRecentJobs...');
+      try {
+        if (!supabase) {
+          console.error('Supabase client no está inicializado');
+          return;
+        }
 
-      if (data) setRecentJobs(data)
+        console.log('Auth state:', { user });
+        console.log('Realizando consulta a Supabase...');
+        
+        const { data, error } = await supabase
+          .from('job_listings_with_profiles')
+          .select('*')
+          .eq('status', 'open')
+          .order('created_at', { ascending: false })
+          .limit(6);
+
+        console.log('Respuesta de Supabase:', { data, error });
+
+        if (error) {
+          console.error('Error al obtener trabajos:', error);
+          return;
+        }
+
+        if (data) {
+          console.log('Datos recibidos:', data);
+          console.log('Estructura del primer trabajo:', data[0]);
+          setRecentJobs(data);
+        } else {
+          console.log('No se recibieron datos');
+        }
+      } catch (err) {
+        console.error('Error en fetchRecentJobs:', err);
+      }
     }
 
-    fetchRecentJobs()
-  }, [])
+    fetchRecentJobs();
+  }, [user])
 
   return (
     <div className="max-w-full px-4 sm:px-6 lg:px-8 items-center flex flex-col">
@@ -201,6 +228,71 @@ export function LandingPage() {
           <button className='flex bg-primary w-fit px-8 h-12 justify-center items-center rounded-lg hover:bg-primary-hover'> <h3 className='text-white font-semibold text-lg'>Join Now</h3> </button>
         </div>
     
+        {/* Recent Jobs Section */}
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <h2 className="text-3xl font-bold text-gray-900 mb-8">Recent Jobs</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentJobs.map((job) => (
+              <div key={job.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="p-6">
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-xl font-semibold text-gray-900">{job.title}</h3>
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary">
+                      {job.category}
+                    </span>
+                  </div>
+                  <p className="mt-2 text-gray-600 line-clamp-3">{job.description}</p>
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center text-gray-500">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      {job.location}
+                    </div>
+                    <div className="flex items-center text-gray-500">
+                      <DollarSign className="h-4 w-4 mr-2" />
+                      ${job.budget}
+                    </div>
+                    <div className="flex items-center text-gray-500">
+                      <Clock className="h-4 w-4 mr-2" />
+                      {new Date(job.created_at).toLocaleDateString()}
+                    </div>
+                  </div>
+                  <div className="mt-4">
+                    <div className="flex flex-wrap gap-2">
+                      {job.skills_required.map((skill) => (
+                        <span
+                          key={skill}
+                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setSelectedJob(job)}
+                    className="mt-6 w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
+                  >
+                    View Details
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Job Application Modal */}
+        {selectedJob && (
+          <JobApplicationModal
+            job={selectedJob}
+            onClose={() => setSelectedJob(null)}
+            onSuccess={() => {
+              setSelectedJob(null);
+              // Opcionalmente podrías recargar los trabajos aquí
+              // fetchRecentJobs();
+            }}
+          />
+        )}
+
         {/* CTA */}
         <div className="grid grid-cols-2 h-fit  mb-12 rounded-full">
           <div className="relative bg-cover h-full bg-center bg-no-repeat object-left overflow-hidden rounded-tl-xl rounded-bl-xl" style={{ backgroundImage: "url('src\\/static\\/LandingPage\\/CTA-1.png')" }}>

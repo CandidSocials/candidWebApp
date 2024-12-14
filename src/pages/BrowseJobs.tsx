@@ -39,7 +39,10 @@ function JobCard({ job }: { job: JobListing }) {
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="p-6">
         <div className="flex justify-between items-start">
-          <h2 className="text-xl font-semibold text-gray-900">{job.title}</h2>
+          <div>
+            <h2 className="text-xl font-semibold text-gray-900">{job.title}</h2>
+            <p className="text-sm text-gray-600">{job.business_company_name || job.business_full_name}</p>
+          </div>
           <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-primary">
             {job.category}
           </span>
@@ -92,27 +95,41 @@ export function BrowseJobs() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    async function fetchJobs() {
+    const fetchJobs = async () => {
       try {
         const { data, error } = await supabase
-          .from('job_listings')
-          .select('*')
+          .from('job_listings_with_profiles')
+          .select(`
+            id,
+            title,
+            description,
+            budget,
+            location,
+            category,
+            skills_required,
+            status,
+            created_at,
+            business_id,
+            business_full_name,
+            business_company_name
+          `)
           .eq('status', 'open')
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .limit(6);
 
         if (error) throw error;
         setJobs(data || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch jobs');
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchJobs();
 
     // Subscribe to job changes
-    const subscription = supabase
+    const channel = supabase
       .channel('job_listings_changes')
       .on(
         'postgres_changes',
@@ -120,6 +137,7 @@ export function BrowseJobs() {
           event: '*',
           schema: 'public',
           table: 'job_listings',
+          filter: 'status=eq.open'
         },
         () => {
           fetchJobs();
@@ -128,7 +146,7 @@ export function BrowseJobs() {
       .subscribe();
 
     return () => {
-      subscription.unsubscribe();
+      channel.unsubscribe();
     };
   }, []);
 
