@@ -68,77 +68,89 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
 
   const handleStatusUpdate = async (applicationId: string, newStatus: 'accepted' | 'rejected') => {
     try {
-      const { error } = await supabase
+      setError('');
+      
+      // Update application status
+      const { error: applicationError } = await supabase
         .from('job_applications')
-        .update({ status: newStatus })
+        .update({ 
+          status: newStatus,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', applicationId);
 
-      if (error) throw error;
+      if (applicationError) throw applicationError;
 
-      // If accepted, create a chat room and add participants
+      // Update local state immediately
+      setApplications(prevApplications => 
+        prevApplications.map(app => 
+          app.id === applicationId ? { ...app, status: newStatus } : app
+        )
+      );
+
+      // If accepted, handle additional updates
       if (newStatus === 'accepted') {
         const application = applications.find(app => app.id === applicationId);
+        
         if (application) {
+          // Update job status
+          await supabase
+            .from('job_listings')
+            .update({ status: 'in_progress' })
+            .eq('id', job.id);
+
           // Create chat room
-          const { data: chatRoom, error: chatRoomError } = await supabase
+          const { data: chatRoom } = await supabase
             .from('chat_rooms')
             .insert([
               {
                 name: `Job: ${job.title}`,
-                job_id: job.id,
-                type: 'job',
+                job_id: job.id
               }
             ])
             .select()
             .single();
 
-          if (chatRoomError) throw chatRoomError;
-
           if (chatRoom) {
             // Add participants
-            const { error: participantsError } = await supabase
+            await supabase
               .from('chat_participants')
               .insert([
                 {
                   room_id: chatRoom.id,
-                  user_id: job.business_id,
+                  user_id: job.business_id
                 },
                 {
                   room_id: chatRoom.id,
-                  user_id: application.freelancer_id,
+                  user_id: application.freelancer_id
                 }
               ]);
-
-            if (participantsError) throw participantsError;
           }
+
+          // Create notification
+          await supabase
+            .from('notifications')
+            .insert([
+              {
+                user_id: application.freelancer_id,
+                type: 'application_status',
+                title: `Application ${newStatus}`,
+                message: `Your application for "${job.title}" has been ${newStatus}`,
+                data: {
+                  jobId: job.id,
+                  applicationId: applicationId
+                }
+              }
+            ]);
         }
       }
 
-      // Create notification for the freelancer
-      const application = applications.find(app => app.id === applicationId);
-      if (application) {
-        await supabase
-          .from('notifications')
-          .insert([
-            {
-              user_id: application.freelancer_id,
-              type: 'application_status',
-              title: `Application ${newStatus}`,
-              message: `Your application for "${job.title}" has been ${newStatus}`,
-              data: {
-                jobId: job.id,
-                applicationId: applicationId,
-              },
-            },
-          ]);
-      }
-
-      setApplications(applications.map(app => 
-        app.id === applicationId ? { ...app, status: newStatus } : app
-      ));
     } catch (err) {
       console.error('Error updating application status:', err);
-      setError(err instanceof Error ? err.message : 'Failed to update application status');
+      setError('Failed to update application status. Please try again.');
+      
+      // Refresh applications list to ensure UI is in sync with DB
+      await fetchApplications();
     }
   };
 
