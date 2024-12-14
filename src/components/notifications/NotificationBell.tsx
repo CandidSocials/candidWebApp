@@ -15,27 +15,19 @@ export function NotificationBell() {
     // Fetch initial unread count
     const fetchUnreadCount = async () => {
       try {
-        const [{ count: notificationsCount }, { count: messagesCount }] = await Promise.all([
-          supabase
-            .from('notifications')
-            .select('*', { count: 'exact', head: true })
-            .eq('user_id', user.id)
-            .eq('read', false),
-          supabase
-            .from('chat_messages')
-            .select('*', { count: 'exact', head: true })
-            .eq('read', false)
-            .neq('sender_id', user.id)
-            .or(`chat_id.in.(${
-              supabase
-                .from('chats')
-                .select('id')
-                .or(`business_id.eq.${user.id},freelancer_id.eq.${user.id}`)
-                .toString()
-            })`)
-        ]);
+        // Contar mensajes no leídos
+        const { data: unreadMessages, error: messagesError } = await supabase
+          .from('messages')
+          .select('id', { count: 'exact' })
+          .eq('receiver_id', user.id)
+          .is('read_at', null);
 
-        setUnreadCount((notificationsCount || 0) + (messagesCount || 0));
+        if (messagesError) {
+          console.error('Error fetching unread count:', messagesError);
+          return;
+        }
+
+        setUnreadCount(unreadMessages?.length || 0);
       } catch (error) {
         console.error('Error fetching unread count:', error);
       }
@@ -43,21 +35,7 @@ export function NotificationBell() {
 
     fetchUnreadCount();
 
-    // Subscribe to new notifications and messages
-    const notificationsChannel = supabase
-      .channel('notifications-count')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'notifications',
-          filter: `user_id=eq.${user.id}`,
-        },
-        () => fetchUnreadCount()
-      )
-      .subscribe();
-
+    // Subscribe to new messages
     const messagesChannel = supabase
       .channel('messages-count')
       .on(
@@ -65,19 +43,31 @@ export function NotificationBell() {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'chat_messages',
+          table: 'messages',
+          filter: `receiver_id=eq.${user.id}`,
         },
-        (payload) => {
-          if (payload.new.sender_id !== user.id) {
-            fetchUnreadCount();
-          }
-        }
+        () => fetchUnreadCount()
+      )
+      .subscribe();
+
+    // Subscribe to message updates (when se marcan como leídos)
+    const messageUpdatesChannel = supabase
+      .channel('message-updates-count')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `receiver_id=eq.${user.id}`,
+        },
+        () => fetchUnreadCount()
       )
       .subscribe();
 
     return () => {
-      notificationsChannel.unsubscribe();
       messagesChannel.unsubscribe();
+      messageUpdatesChannel.unsubscribe();
     };
   }, [user]);
 

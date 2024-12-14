@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProfile } from '../lib/useProfile';
 import { JobListingForm } from '../components/business/JobListingForm';
-import { MyApplications } from '../components/talent/MyApplications';
+import { MyApplications } from '../components/MyApplications';
 import { TalentListingModal } from '../components/talent/TalentListingModal';
 import { JobListingModal } from '../components/job/JobListingModal.tsx';
 import { Toast } from './Toast.tsx';

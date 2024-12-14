@@ -12,56 +12,84 @@ export function useChatRooms() {
   useEffect(() => {
     if (!user) return;
 
-    async function fetchRooms() {
+    const fetchRooms = async () => {
       try {
-        const { data, error: roomsError } = await supabase
-          .from('chat_rooms_with_participants')
-          .select('*')
-          .order('updated_at', { ascending: false });
+        // Obtener mensajes agrupados por job_id
+        const { data, error } = await supabase
+          .from('messages')
+          .select(`
+            job_id,
+            job:job_listings(title),
+            sender:sender_id(full_name),
+            receiver:receiver_id(full_name),
+            created_at,
+            content
+          `)
+          .or(`sender_id.eq.${user.id},receiver_id.eq.${user.id}`)
+          .order('created_at', { ascending: false });
 
-        if (roomsError) throw roomsError;
+        if (error) {
+          console.error('Error fetching rooms:', error);
+          setError(error.message);
+          return;
+        }
 
-        // Filter rooms where the user is a participant
-        const userRooms = (data || []).filter(room => 
-          room.participants?.some(p => p.user_id === user.id)
-        );
-        
-        setRooms(userRooms);
-      } catch (err) {
-        console.error('Error fetching rooms:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch chat rooms');
+        // Agrupar mensajes por job_id
+        const roomsMap = new Map();
+        data?.forEach(message => {
+          if (!roomsMap.has(message.job_id)) {
+            const otherUser = message.sender_id === user.id ? message.receiver : message.sender;
+            roomsMap.set(message.job_id, {
+              id: message.job_id,
+              name: message.job.title,
+              updated_at: message.created_at,
+              participants: [
+                {
+                  user_id: message.sender_id,
+                  profile: message.sender
+                },
+                {
+                  user_id: message.receiver_id,
+                  profile: message.receiver
+                }
+              ],
+              last_message: {
+                content: message.content,
+                created_at: message.created_at
+              }
+            });
+          }
+        });
+
+        setRooms(Array.from(roomsMap.values()));
+        setError(null);
+      } catch (error) {
+        console.error('Error fetching rooms:', error);
+        setError('Failed to fetch chat rooms');
       } finally {
         setLoading(false);
       }
-    }
+    };
 
     fetchRooms();
 
-    // Subscribe to changes
-    const subscription = supabase
-      .channel('chat_updates')
+    // Subscribe to new messages
+    const messagesSubscription = supabase
+      .channel('messages')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'chat_rooms',
-        },
-        () => fetchRooms()
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'chat_messages',
+          table: 'messages',
+          filter: `or(sender_id.eq.${user.id},receiver_id.eq.${user.id})`
         },
         () => fetchRooms()
       )
       .subscribe();
 
     return () => {
-      subscription.unsubscribe();
+      messagesSubscription.unsubscribe();
     };
   }, [user]);
 

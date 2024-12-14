@@ -33,6 +33,18 @@ export function AuthForm() {
 
   const createUserProfile = async (userId: string, selectedRole: UserRole) => {
     try {
+      // Verificar si ya existe un perfil
+      const { data: existingProfile } = await supabase
+        .from('user_profiles')
+        .select('user_id')
+        .eq('user_id', userId)
+        .single();
+
+      if (existingProfile) {
+        console.log('Profile already exists');
+        return;
+      }
+
       // Try to delete any existing presence record first (in case it's stuck)
       await supabase
         .from('user_presence')
@@ -100,6 +112,8 @@ export function AuthForm() {
           throw new Error('Sign in failed');
         }
 
+        // Verificar y crear perfil si es necesario
+        await createUserProfile(signInData.user.id, 'business');
         navigate('/dashboard');
       }
     } catch (err) {
@@ -201,26 +215,24 @@ export function AuthForm() {
                 <button
                   type="button"
                   onClick={() => setRole('business')}
-                  className={`w-full p-3 text-left border rounded-lg transition-colors ${
+                  className={`w-full py-2 px-4 rounded-md border ${
                     role === 'business'
-                      ? 'border-primary bg-indigo-50'
-                      : 'hover:border-primary'
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  <span className="font-medium">Hire Talent</span>
-                  <p className="text-sm text-gray-500">I'm a business looking to hire</p>
+                  Hire Freelancers (Business)
                 </button>
                 <button
                   type="button"
                   onClick={() => setRole('freelancer')}
-                  className={`w-full p-3 text-left border rounded-lg transition-colors ${
+                  className={`w-full py-2 px-4 rounded-md border ${
                     role === 'freelancer'
-                      ? 'border-primary bg-indigo-50'
-                      : 'hover:border-primary'
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  <span className="font-medium">Work as a Freelancer</span>
-                  <p className="text-sm text-gray-500">I want to offer my services</p>
+                  Work as a Freelancer
                 </button>
               </div>
             </div>
@@ -229,18 +241,12 @@ export function AuthForm() {
 
         <button
           type="submit"
-          disabled={loading || (mode === 'signup' && !role)}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+          disabled={loading}
+          className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
-          {loading ? (
-            <div className="flex items-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            </div>
-          ) : mode === 'signin' ? (
-            'Sign In'
-          ) : (
-            'Create Account'
-          )}
+          {loading ? 'Please wait...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
         </button>
       </form>
     </div>

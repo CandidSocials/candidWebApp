@@ -9,7 +9,7 @@ interface JobApplication {
   created_at: string
   job: {
     title: string
-    company_name: string
+    business_company_name: string
     status: 'open' | 'closed' | 'in_progress'
     description: string
     budget: number
@@ -33,9 +33,9 @@ export function JobHistory({ freelancerId }: JobHistoryProps) {
           job_id,
           status,
           created_at,
-          job:job_listings (
+          job:job_listings_with_profiles (
             title,
-            company_name,
+            business_company_name,
             status,
             description,
             budget
@@ -63,7 +63,7 @@ export function JobHistory({ freelancerId }: JobHistoryProps) {
           <div className="flex justify-between items-start">
             <div>
               <h3 className="font-semibold text-gray-900">{application.job.title}</h3>
-              <p className="text-gray-600">{application.job.company_name}</p>
+              <p className="text-gray-600">{application.job.business_company_name}</p>
               <div className="mt-2 space-y-2">
                 <p className="text-sm text-gray-500 line-clamp-2">
                   {application.job.description}
