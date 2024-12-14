@@ -15,60 +15,6 @@ export function AuthForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const verifyUserExists = async (userId: string): Promise<boolean> => {
-    try {
-      const { data, error } = await supabase
-        .from('auth.users')
-        .select('id')
-        .eq('id', userId)
-        .single();
-      
-      if (error) throw error;
-      return !!data;
-    } catch (err) {
-      console.error('User verification error:', err);
-      return false;
-    }
-  };
-
-  const createUserProfile = async (userId: string, selectedRole: UserRole) => {
-    try {
-      // Verificar si ya existe un perfil
-      const { data: existingProfile } = await supabase
-        .from('user_profiles')
-        .select('user_id')
-        .eq('user_id', userId)
-        .single();
-
-      if (existingProfile) {
-        console.log('Profile already exists');
-        return;
-      }
-
-      // Try to delete any existing presence record first (in case it's stuck)
-      await supabase
-        .from('user_presence')
-        .delete()
-        .eq('user_id', userId);
-
-      // Create the profile
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .insert({
-          user_id: userId,
-          role: selectedRole,
-          full_name: '',
-          location: '',
-          created_at: new Date().toISOString()
-        });
-
-      if (profileError) throw profileError;
-    } catch (err) {
-      console.error('Profile creation error:', err);
-      throw err;
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
@@ -83,42 +29,43 @@ export function AuthForm() {
           throw new Error('Passwords do not match');
         }
   
-        // Just do the auth signup first
+        // Sign up
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password
         });
   
         if (signUpError) throw signUpError;
+        if (!signUpData.user?.id) throw new Error('User creation failed');
   
-        if (!signUpData.user?.id) {
-          throw new Error('User creation failed');
-        }
-  
-        // Create the profile
-        await createUserProfile(signUpData.user.id, role);
+        // Create profile
+        const { error: profileError } = await supabase
+          .from('user_profiles')
+          .insert([{
+            user_id: signUpData.user.id,
+            role,
+            full_name: '',
+            location: '',
+            created_at: new Date().toISOString()
+          }]);
+
+        if (profileError) throw profileError;
           
         navigate('/profile/setup');
       } else {
-        // Sign in logic
+        // Sign in
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password
         });
 
         if (signInError) throw signInError;
+        if (!signInData.user) throw new Error('Sign in failed');
 
-        if (!signInData.user) {
-          throw new Error('Sign in failed');
-        }
-
-        // Verificar y crear perfil si es necesario
-        await createUserProfile(signInData.user.id, 'business');
         navigate('/dashboard');
       }
     } catch (err) {
       console.error('Auth error:', err);
-      await supabase.auth.signOut();
       setError(err instanceof Error ? err.message : 'An error occurred during authentication');
     } finally {
       setLoading(false);

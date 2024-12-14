@@ -12,56 +12,11 @@ const AuthContext = createContext<AuthContextType>({ user: null, loading: true }
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [profileCreated, setProfileCreated] = useState(false);
-
-  const createUserProfile = async (user: User) => {
-    if (profileCreated) return true;
-
-    try {
-      // Verificar si ya existe un perfil
-      const { data: existingProfile, error: profileError } = await supabase
-        .from('user_profiles')
-        .select('user_id')
-        .eq('user_id', user.id)
-        .single();
-
-      if (profileError && profileError.code !== 'PGRST116') {
-        console.error('Error checking profile:', profileError);
-        return false;
-      }
-
-      if (existingProfile) {
-        setProfileCreated(true);
-        return true;
-      }
-
-      // Si no existe, crear el perfil
-      const { error: insertError } = await supabase
-        .from('user_profiles')
-        .insert({
-          user_id: user.id,
-          full_name: user.user_metadata.full_name || user.email?.split('@')[0] || 'Usuario',
-          role: 'business',
-          location: '',
-          created_at: new Date().toISOString()
-        });
-
-      if (insertError) {
-        console.error('Error creating user profile:', insertError);
-        return false;
-      }
-
-      setProfileCreated(true);
-      return true;
-    } catch (error) {
-      console.error('Error in createUserProfile:', error);
-      return false;
-    }
-  };
 
   useEffect(() => {
     let mounted = true;
 
+    // Check active session
     const initializeAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -69,19 +24,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!mounted) return;
 
         if (session?.user) {
-          const success = await createUserProfile(session.user);
-          if (success) {
-            setUser(session.user);
-          }
+          setUser(session.user);
         } else {
           setUser(null);
-          setProfileCreated(false);
         }
       } catch (error) {
         console.error('Error initializing auth:', error);
         if (mounted) {
           setUser(null);
-          setProfileCreated(false);
         }
       } finally {
         if (mounted) {
@@ -92,17 +42,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     initializeAuth();
 
+    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!mounted) return;
 
       if (session?.user) {
-        const success = await createUserProfile(session.user);
-        if (success) {
-          setUser(session.user);
-        }
+        setUser(session.user);
       } else {
         setUser(null);
-        setProfileCreated(false);
       }
       setLoading(false);
     });
