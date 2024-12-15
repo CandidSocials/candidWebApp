@@ -115,10 +115,10 @@ export function LandingPage() {
           <div className="lg:w-1/2 relative mt-0 lg:mt-12 z-1">
             <div className="relative z-10 grid grid-cols-2 gap-2 lg:gap-4">
               <div className="rounded-full h-fit mt-6 lg:mt-24">
-                <img src="static\LandingPage\hero-2.webp" alt="Photographer" className="rounded-lg" />
+                <img src="\LandingPage\hero-2.webp" alt="Photographer" className="rounded-lg" />
               </div>
               <div className="rounded-full">
-                <img src="static\LandingPage\hero-1.webp" alt="Videographer" className="rounded-lg" />
+                <img src="\LandingPage\hero-1.webp" alt="Videographer" className="rounded-lg" />
               </div>
             </div>
             {/* Background decoration */}
