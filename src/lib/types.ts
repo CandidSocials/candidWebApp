@@ -1,14 +1,9 @@
 export type UserRole = 'business' | 'freelancer';
 
 export const CATEGORIES = [
-  'Web Development',
-  'Mobile Development',
-  'UI/UX Design',
-  'Graphic Design',
-  'Digital Marketing',
-  'Content Writing',
   'Video Editing',
   'Photography',
+  'Videography',
   'Other'
 ] as const;
 

@@ -72,7 +72,7 @@ export function LandingPage() {
     <div className="font-poppins font-normal  w-full px-0 lg:px-8 items-center flex flex-col">
       
       {/* Hero Section */}
-      <div className="px-4 sm:px-6 lg:px-8 z-1 mb-[100px] md:mb-32 flex items-center flex-col ">
+      <div className="w-full px-4 sm:px-6 lg:px-8 z-1 mb-[100px] md:mb-32 flex items-center flex-col ">
       <img src="src\static\LandingPage\hero-bg.png" className=' hidden md:absolute w-full object-contain z-[-10] ' />
         <div className="flex flex-col lg:flex-row items-center justify-between py-16 sm:py-24 gap-0 lg:gap-12">
           {/* Left side content */}
@@ -113,12 +113,12 @@ export function LandingPage() {
           
           {/* Right side images */}
           <div className="lg:w-1/2 relative mt-0 lg:mt-12 z-1">
-            <div className="relative z-10 grid grid-cols-2 gap-4">
+            <div className="relative z-10 grid grid-cols-2 gap-2 lg:gap-4">
               <div className="rounded-full h-fit mt-6 lg:mt-24">
-                <img src="src\static\LandingPage\hero-2.webp" alt="Photographer" className="rounded-lg" />
+                <img src="public\LandingPage\hero-2.webp" alt="Photographer" className="rounded-lg" />
               </div>
               <div className="rounded-full">
-                <img src="src\static\LandingPage\hero-1.webp" alt="Videographer" className="rounded-lg" />
+                <img src="public\LandingPage\hero-1.webp" alt="Videographer" className="rounded-lg" />
               </div>
             </div>
             {/* Background decoration */}
@@ -127,7 +127,7 @@ export function LandingPage() {
         </div>
 
         {/* Service Icons */}
-        <div className="shadow-lg lg:shadow-none w-[80%] grid grid-cols-1 lg:grid-cols-3 gap-24 px-10 lg:px-24 py-12 z-[10] bg-white mt-[-180px] rounded-xl">
+        <div className="shadow-lg lg:shadow-none w-full md:w-[80%] grid grid-cols-1 lg:grid-cols-3 gap-24 px-10 lg:px-24 py-12 z-[10] bg-white mt-[-180px] rounded-xl">
           <div className="text-left space-y-4  z-1">
             <img src="src\static\LandingPage\hero-item-1.png" className='w-12 h-12' />
             <h3 className="text-gray-600 font-medium">Book the Best Photographers for Unforgettable Moments</h3>
@@ -164,7 +164,8 @@ export function LandingPage() {
               <p className="text-[#0A2B14] text-lg font-semibold">Choose and Collaborate: Pick your creative partner, communicate directly, and bring your vision to life.</p>
             </div>
           </div>
-          <img src="src/static/LandingPage/how-it-works.png" className='w-full md:w-[85%] h-[80vh] md:h-screen object-cover rounded-lg' />
+          <img src="src/static/LandingPage/how-it-works.png" className='hidden md:block w-full md:w-[85%] h-[80vh] md:h-screen object-cover rounded-lg object-center' />
+          <img src="src/static/LandingPage/how-it-works-mobile.png" className='block md:hidden w-full md:w-[85%] h-[80vh] md:h-screen object-cover rounded-lg object-center' />
         </div>
 
         {/* The local content solution... */}
@@ -175,7 +176,7 @@ export function LandingPage() {
           </h3>
           <div className='w-full flex flex-col lg:flex-row gap-12 mb-0 lg:mb-24'>
           
-          <div className="w-full grid grid-cols-1 gap-8 text-[#222325]">
+          <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 text-[#222325]">
             <div>
               <img src="src\static\LandingPage\check.png" className="w-4 h-4" />
               <h2 className="text-2xl font-normal mb-2 mt-2">Only Local Creatives</h2>
@@ -201,7 +202,7 @@ export function LandingPage() {
             </div>
           </div>
           <div className='w-full'>
-            <img className='w-full' src="src\static\LandingPage\Landing-1.png" />
+            <img className='w-full' src="src\static\LandingPage\landing-1.png" />
           </div>
           
         </div>

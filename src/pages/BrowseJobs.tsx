@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { JobListing } from '../lib/types';
 import { MapPin, Clock, DollarSign } from 'lucide-react';
@@ -12,6 +12,23 @@ function JobCard({ job }: { job: JobListing }) {
   const { profile } = useProfile();
   const { application, loading: applicationLoading } = useJobApplication(job.id);
   const [showApplicationModal, setShowApplicationModal] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+
+  useEffect(() => {
+    const checkTruncation = () => {
+      const element = descriptionRef.current;
+      if (element) {
+        setIsTruncated(element.scrollHeight > element.clientHeight);
+      }
+    };
+
+    checkTruncation();
+    // Recheck on window resize
+    window.addEventListener('resize', checkTruncation);
+    return () => window.removeEventListener('resize', checkTruncation);
+  }, [job.description]);
 
   const renderActionButton = () => {
     if (!profile || profile.role !== 'freelancer') return null;
@@ -36,10 +53,47 @@ function JobCard({ job }: { job: JobListing }) {
     );
   };
 
+  const renderDescription = () => {
+    if (isExpanded) {
+      return (
+        <div className="relative">
+          <p className="mt-2 text-gray-600 whitespace-pre-wrap max-h-48 overflow-y-auto">
+            {job.description}
+          </p>
+          <button
+            onClick={() => setIsExpanded(false)}
+            className="text-primary hover:text-primary-hover text-sm mt-2 font-medium"
+          >
+            Show less
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="relative">
+        <p 
+          ref={descriptionRef}
+          className="mt-2 text-gray-600 line-clamp-3"
+        >
+          {job.description}
+        </p>
+        {isTruncated && (
+          <button
+            onClick={() => setIsExpanded(true)}
+            className="text-primary hover:text-primary-hover text-sm mt-2 font-medium"
+          >
+            Read more
+          </button>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="p-6">
-        <div className="flex justify-between items-start">
+        <div className="flex flex-col gap-2 md:flex-row justify-between items-start">
           <div>
             <h2 className="text-xl font-semibold text-gray-900">{job.title}</h2>
             <p className="text-sm text-gray-600">{job.business_company_name || job.business_full_name}</p>
@@ -48,7 +102,7 @@ function JobCard({ job }: { job: JobListing }) {
             {job.category}
           </span>
         </div>
-        <p className="mt-2 text-gray-600 line-clamp-3">{job.description}</p>
+        {renderDescription()}
         <div className="mt-4 space-y-2">
           <div className="flex items-center text-gray-500">
             <MapPin className="h-4 w-4 mr-2" />

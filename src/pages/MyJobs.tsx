@@ -97,7 +97,7 @@ export function MyJobs() {
           {jobs.map((job) => (
             <div key={job.id} className="bg-white rounded-lg shadow-md overflow-hidden">
               <div className="p-6">
-                <div className="flex justify-between items-start">
+                <div className="flex flex-col gap-2 md:flex-row justify-between items-start">
                   <h2 className="text-xl font-semibold text-gray-900">{job.title}</h2>
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-primary">
                     {job.category}
@@ -130,7 +130,7 @@ export function MyJobs() {
                     ))}
                   </div>
                 </div>
-                <div className="mt-6 flex space-x-3 justify-between">
+                <div className="mt-6 flex flex-col gap-2 md:flex-row  justify-between">
                   <button
                     onClick={() => setViewingApplications(job)}
                     className="flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
@@ -138,16 +138,16 @@ export function MyJobs() {
                     <Users className="h-4 w-4 mr-1" />
                     Applications
                   </button>
-                  <div className='flex items-center space-x-3'>
+                  <div className='w-full flex items-center gap-2'>
                     <button
                       onClick={() => setEditingJob(job)}
-                      className="flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+                      className="flex w-full  items-center justify-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
                     >
                       <Pencil className="h-4 w-4" />
                     </button>
                     <button
                       onClick={() => setDeletingJob(job)}
-                      className="flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+                      className="flex w-full items-center px-3  justify-center py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>

@@ -92,9 +92,11 @@ export function Navigation() {
                   className="text-primary hover:text-primary-hover flex items-center"
                 >
                   <MessageSquare className="h-5 w-5 mr-1" />
-                  Chats
                 </Link>
-                <NotificationBell />
+                <div className='mt-2'>
+                  <NotificationBell />
+                </div>
+                
                 <button
                   onClick={handleSignOut}
                   className="text-primary hover:text-primary-hover"

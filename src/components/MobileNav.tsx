@@ -117,12 +117,13 @@ export function MobileNav() {
                   onClick={() => handleNavigation('/chats')}
                   className="text-left text-gray-700 hover:text-primary flex items-center"
                 >
-                  <MessageSquare className="h-5 w-5 mr-2" />
+                  
                   Chats
                 </button>
 
-                <div className="py-2">
-                  <NotificationBell />
+                <div className="flex flex-row items-center gap-2">
+                  
+                  Notifications
                 </div>
 
                 <button
