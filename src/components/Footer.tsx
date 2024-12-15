@@ -112,7 +112,7 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-gray-200 py-6">
+        <div className="border-t border-solid border-[#8d8d8d68] py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-gray-500 text-sm">
               {new Date().getFullYear()} Candid. All rights reserved.
