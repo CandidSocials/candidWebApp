@@ -6,6 +6,7 @@ import { JobApplicationModal } from '../components/job/JobApplicationModal';
 import { useProfile } from '../lib/useProfile';
 import { JobStatusBadge } from '../components/job/JobStatusBadge';
 import { useJobApplication } from '../hooks/useJobApplication';
+import { useSearchParams } from 'react-router-dom';
 
 function JobCard({ job }: { job: JobListing }) {
   const { profile } = useProfile();
@@ -89,15 +90,21 @@ function JobCard({ job }: { job: JobListing }) {
 }
 
 export function BrowseJobs() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const { profile } = useProfile();
   const [jobs, setJobs] = useState<JobListing[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const categoryFilter = searchParams.get('category');
+
+  const clearFilters = () => {
+    setSearchParams({});
+  };
 
   useEffect(() => {
-    const fetchJobs = async () => {
+    async function fetchJobs() {
       try {
-        const { data, error } = await supabase
+        let query = supabase
           .from('job_listings_with_profiles')
           .select(`
             id,
@@ -114,41 +121,27 @@ export function BrowseJobs() {
             business_company_name
           `)
           .eq('status', 'open')
-          .order('created_at', { ascending: false })
-          .limit(6);
+          .order('created_at', { ascending: false });
+
+        // Apply category filter if present
+        if (categoryFilter) {
+          query = query.ilike('category', `%${categoryFilter}%`);
+        }
+
+        const { data, error } = await query.limit(6);
 
         if (error) throw error;
         setJobs(data || []);
       } catch (error) {
         console.error('Error fetching jobs:', error);
+        setError(error instanceof Error ? error.message : 'Failed to fetch jobs');
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     fetchJobs();
-
-    // Subscribe to job changes
-    const channel = supabase
-      .channel('job_listings_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'job_listings',
-          filter: 'status=eq.open'
-        },
-        () => {
-          fetchJobs();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      channel.unsubscribe();
-    };
-  }, []);
+  }, [categoryFilter]);
 
   if (loading) {
     return (
@@ -169,11 +162,24 @@ export function BrowseJobs() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Browse Jobs</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {jobs.map((job) => (
-          <JobCard key={job.id} job={job} />
-        ))}
-      </div>
+      
+      {jobs.length === 0 && categoryFilter ? (
+        <div className="text-center py-8">
+          <p className="text-gray-600 mb-4">No jobs found for "{categoryFilter}"</p>
+          <button
+            onClick={clearFilters}
+            className="text-primary hover:text-primary-hover underline font-medium"
+          >
+            Search all jobs
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {jobs.map((job) => (
+            <JobCard key={job.id} job={job} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

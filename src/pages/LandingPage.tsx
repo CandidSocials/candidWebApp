@@ -12,6 +12,7 @@ export function LandingPage() {
   const { user } = useAuth()
   const [recentJobs, setRecentJobs] = useState<JobListing[]>([])
   const [selectedJob, setSelectedJob] = useState<JobListing | null>(null)
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     console.log('LandingPage useEffect triggered');
@@ -55,6 +56,18 @@ export function LandingPage() {
     fetchRecentJobs();
   }, [user])
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    
+    if (searchQuery.trim()) {
+      navigate(`/jobs?category=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
     <div className="font-poppins font-normal  w-full px-0 lg:px-8 items-center flex flex-col">
       
@@ -67,16 +80,21 @@ export function LandingPage() {
             <h1 className="font-poppins font-normal md:text-5xl text-4xl text-primary tracking-tight ">
               Find Local Talent Near You
             </h1>
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <input
                 type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search services near you..."
                 className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary"
               />
-              <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#003912] text-white p-2 rounded-lg">
+              <button 
+                type="submit"
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-[#003912] text-white p-2 rounded-lg hover:bg-primary-hover"
+              >
                 <SearchIcon className="h-5 w-5 p-0.5" />
               </button>
-            </div>
+            </form>
             <div className="flex gap-8 pt-4">
               <div>
                 <div className="text-2xl font-normal text-primary">30+</div>
