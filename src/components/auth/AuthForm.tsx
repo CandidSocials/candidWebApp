@@ -15,48 +15,6 @@ export function AuthForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const verifyUserExists = async (userId: string): Promise<boolean> => {
-    try {
-      const { data, error } = await supabase
-        .from('auth.users')
-        .select('id')
-        .eq('id', userId)
-        .single();
-      
-      if (error) throw error;
-      return !!data;
-    } catch (err) {
-      console.error('User verification error:', err);
-      return false;
-    }
-  };
-
-  const createUserProfile = async (userId: string, selectedRole: UserRole) => {
-    try {
-      // Try to delete any existing presence record first (in case it's stuck)
-      await supabase
-        .from('user_presence')
-        .delete()
-        .eq('user_id', userId);
-
-      // Create the profile
-      const { error: profileError } = await supabase
-        .from('user_profiles')
-        .insert({
-          user_id: userId,
-          role: selectedRole,
-          full_name: '',
-          location: '',
-          created_at: new Date().toISOString()
-        });
-
-      if (profileError) throw profileError;
-    } catch (err) {
-      console.error('Profile creation error:', err);
-      throw err;
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
@@ -71,40 +29,43 @@ export function AuthForm() {
           throw new Error('Passwords do not match');
         }
   
-        // Just do the auth signup first
+        // Sign up
         const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
           email,
           password
         });
   
         if (signUpError) throw signUpError;
+        if (!signUpData.user?.id) throw new Error('User creation failed');
   
-        if (!signUpData.user?.id) {
-          throw new Error('User creation failed');
-        }
-  
-        // Create the profile
-        await createUserProfile(signUpData.user.id, role);
+        // Create profile
+        const { error: profileError } = await supabase
+          .from('user_profiles')
+          .insert([{
+            user_id: signUpData.user.id,
+            role,
+            full_name: '',
+            location: '',
+            created_at: new Date().toISOString()
+          }]);
+
+        if (profileError) throw profileError;
           
         navigate('/profile/setup');
       } else {
-        // Sign in logic
+        // Sign in
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
           email,
           password
         });
 
         if (signInError) throw signInError;
-
-        if (!signInData.user) {
-          throw new Error('Sign in failed');
-        }
+        if (!signInData.user) throw new Error('Sign in failed');
 
         navigate('/dashboard');
       }
     } catch (err) {
       console.error('Auth error:', err);
-      await supabase.auth.signOut();
       setError(err instanceof Error ? err.message : 'An error occurred during authentication');
     } finally {
       setLoading(false);
@@ -201,26 +162,24 @@ export function AuthForm() {
                 <button
                   type="button"
                   onClick={() => setRole('business')}
-                  className={`w-full p-3 text-left border rounded-lg transition-colors ${
+                  className={`w-full py-2 px-4 rounded-md border ${
                     role === 'business'
-                      ? 'border-primary bg-indigo-50'
-                      : 'hover:border-primary'
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  <span className="font-medium">Hire Talent</span>
-                  <p className="text-sm text-gray-500">I'm a business looking to hire</p>
+                  Hire Freelancers (Business)
                 </button>
                 <button
                   type="button"
                   onClick={() => setRole('freelancer')}
-                  className={`w-full p-3 text-left border rounded-lg transition-colors ${
+                  className={`w-full py-2 px-4 rounded-md border ${
                     role === 'freelancer'
-                      ? 'border-primary bg-indigo-50'
-                      : 'hover:border-primary'
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                   }`}
                 >
-                  <span className="font-medium">Work as a Freelancer</span>
-                  <p className="text-sm text-gray-500">I want to offer my services</p>
+                  Work as a Freelancer
                 </button>
               </div>
             </div>
@@ -229,18 +188,12 @@ export function AuthForm() {
 
         <button
           type="submit"
-          disabled={loading || (mode === 'signup' && !role)}
-          className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary disabled:opacity-50"
+          disabled={loading}
+          className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary ${
+            loading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
         >
-          {loading ? (
-            <div className="flex items-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-            </div>
-          ) : mode === 'signin' ? (
-            'Sign In'
-          ) : (
-            'Create Account'
-          )}
+          {loading ? 'Please wait...' : mode === 'signin' ? 'Sign In' : 'Create Account'}
         </button>
       </form>
     </div>

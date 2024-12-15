@@ -17,10 +17,10 @@ export function JobApplicationsList() {
           .from('job_applications')
           .select(`
             *,
-            job_listings!inner(*),
+            job_listings_with_profiles!inner(*),
             user_profiles!inner(full_name)
           `)
-          .eq('job_listings.business_id', user?.id)
+          .eq('job_listings_with_profiles.business_id', user?.id)
           .order('created_at', { ascending: false });
 
         if (error) throw error;
@@ -86,7 +86,7 @@ export function JobApplicationsList() {
                 {application.user_profiles?.full_name}
               </h3>
               <p className="text-sm text-gray-500">
-                Applied for: {application.job_listings?.title}
+                Applied for: {application.job_listings_with_profiles?.title}
               </p>
             </div>
             <span className={`px-2 py-1 text-sm rounded-full ${

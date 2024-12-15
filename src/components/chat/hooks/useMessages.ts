@@ -3,14 +3,14 @@ import { supabase } from '@/lib/supabase';
 import { Message } from '../types';
 import { useAuth } from '@/lib/AuthProvider';
 
-export function useMessages(roomId: string | null) {
+export function useMessages(jobId: string, otherUserId: string) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!roomId || !user) {
+    if (!jobId || !user || !otherUserId) {
       setMessages([]);
       setLoading(false);
       return;
@@ -19,19 +19,22 @@ export function useMessages(roomId: string | null) {
     async function fetchMessages() {
       try {
         const { data, error: fetchError } = await supabase
-          .from('chat_messages')
+          .from('messages')
           .select(`
             *,
-            sender:user_profiles!inner(full_name)
+            sender:sender_id(full_name),
+            receiver:receiver_id(full_name)
           `)
-          .eq('room_id', roomId)
+          .or(`and(sender_id.eq.${user.id},receiver_id.eq.${otherUserId}),and(sender_id.eq.${otherUserId},receiver_id.eq.${user.id})`)
+          .eq('job_id', jobId)
           .order('created_at', { ascending: true });
 
         if (fetchError) throw fetchError;
         setMessages(data || []);
+        setError(null);
       } catch (err) {
         console.error('Error fetching messages:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch messages');
+        setError(err instanceof Error ? err : new Error('Failed to fetch messages'));
       } finally {
         setLoading(false);
       }
@@ -41,29 +44,23 @@ export function useMessages(roomId: string | null) {
 
     // Subscribe to new messages
     const subscription = supabase
-      .channel(`room:${roomId}`)
+      .channel('messages')
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'chat_messages',
-          filter: `room_id=eq.${roomId}`,
+          table: 'messages',
+          filter: `job_id=eq.${jobId}`
         },
-        async (payload) => {
-          // Fetch the sender's profile for the new message
-          const { data: senderData } = await supabase
-            .from('user_profiles')
-            .select('full_name')
-            .eq('user_id', payload.new.sender_id)
-            .single();
-
-          const newMessage = {
-            ...payload.new,
-            sender: senderData
-          } as Message;
-
-          setMessages(prev => [...prev, newMessage]);
+        (payload) => {
+          // Solo agregar el mensaje si es relevante para esta conversación
+          if (
+            (payload.new.sender_id === user.id && payload.new.receiver_id === otherUserId) ||
+            (payload.new.sender_id === otherUserId && payload.new.receiver_id === user.id)
+          ) {
+            fetchMessages();
+          }
         }
       )
       .subscribe();
@@ -71,27 +68,27 @@ export function useMessages(roomId: string | null) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [roomId, user]);
+  }, [jobId, user, otherUserId]);
 
   const sendMessage = async (content: string) => {
-    if (!roomId || !content.trim() || !user) return;
+    if (!jobId || !content.trim() || !user || !otherUserId) return;
 
     try {
       const { error: sendError } = await supabase
-        .from('chat_messages')
+        .from('messages')
         .insert([
           {
-            room_id: roomId,
+            job_id: jobId,
             sender_id: user.id,
-            content: content.trim(),
-            type: 'text'
+            receiver_id: otherUserId,
+            content: content.trim()
           }
         ]);
 
       if (sendError) throw sendError;
     } catch (err) {
       console.error('Error sending message:', err);
-      setError(err instanceof Error ? err.message : 'Failed to send message');
+      throw err;
     }
   };
 

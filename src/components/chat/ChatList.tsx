@@ -6,18 +6,20 @@ import { MessageSquare } from 'lucide-react'
 
 interface Chat {
   id: string
-  job_application_id: string
-  business_id: string
-  freelancer_id: string
-  other_user: {
-    full_name: string
-  }
-  job_listing: {
-    title: string
-  }
+  name: string
+  created_at: string
+  created_by: string
+  participants: {
+    user_id: string
+    user: {
+      full_name: string
+      avatar_url: string
+    }
+  }[]
   last_message?: {
     content: string
     created_at: string
+    sender_id: string
   }
 }
 
@@ -27,90 +29,84 @@ export function ChatList() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchChats()
-    
-    // Subscribe to new chats
-    const channel = supabase
-      .channel('chat-updates')
+    const fetchChats = async () => {
+      try {
+        // First get the chat rooms where the user is a participant
+        const { data: chatRooms, error: roomsError } = await supabase
+          .from('chat_rooms')
+          .select(`
+            id,
+            name,
+            created_at,
+            created_by,
+            participants:chat_participants(
+              user_id,
+              user:user_profiles(
+                full_name,
+                avatar_url
+              )
+            ),
+            last_message:chat_messages(
+              content,
+              created_at,
+              sender_id
+            )
+          `)
+          .order('created_at', { ascending: false });
+
+        if (roomsError) {
+          console.error('Error fetching chat rooms:', roomsError);
+          throw roomsError;
+        }
+
+        setChats(chatRooms || []);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false)
+      }
+    };
+
+    fetchChats();
+
+    // Subscribe to chat room updates
+    const roomsChannel = supabase
+      .channel('chat-room-updates')
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: 'chats',
-          filter: `business_id=eq.${user?.id},freelancer_id=eq.${user?.id}`,
+          table: 'chat_rooms',
+          filter: `participants.user_id=eq.${user?.id}`
         },
         () => {
-          fetchChats()
+          fetchChats();
         }
       )
-      .subscribe()
+      .subscribe();
+
+    // Subscribe to new messages
+    const messagesChannel = supabase
+      .channel('chat-message-updates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages'
+        },
+        () => {
+          fetchChats();
+        }
+      )
+      .subscribe();
 
     return () => {
-      channel.unsubscribe()
-    }
+      roomsChannel.unsubscribe();
+      messagesChannel.unsubscribe();
+    };
   }, [user])
-
-  const fetchChats = async () => {
-    try {
-      const { data: chatsData } = await supabase
-        .from('chats')
-        .select(`
-          *,
-          job_application:job_applications (
-            job:job_listings (
-              title
-            )
-          ),
-          business:business_id (
-            profile:user_profiles (
-              full_name
-            )
-          ),
-          freelancer:freelancer_id (
-            profile:user_profiles (
-              full_name
-            )
-          )
-        `)
-        .or(`business_id.eq.${user?.id},freelancer_id.eq.${user?.id}`)
-        .order('created_at', { ascending: false })
-
-      if (chatsData) {
-        const formattedChats = chatsData.map(chat => ({
-          ...chat,
-          other_user: user?.id === chat.business_id
-            ? chat.freelancer.profile
-            : chat.business.profile,
-          job_listing: chat.job_application.job
-        }))
-
-        // Fetch last message for each chat
-        const chatsWithLastMessage = await Promise.all(
-          formattedChats.map(async chat => {
-            const { data: messages } = await supabase
-              .from('chat_messages')
-              .select('content, created_at')
-              .eq('chat_id', chat.id)
-              .order('created_at', { ascending: false })
-              .limit(1)
-              .single()
-
-            return {
-              ...chat,
-              last_message: messages
-            }
-          })
-        )
-
-        setChats(chatsWithLastMessage)
-      }
-    } catch (error) {
-      console.error('Error fetching chats:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   if (loading) {
     return (
@@ -143,7 +139,7 @@ export function ChatList() {
           <div className="px-4 py-4 sm:px-6">
             <div className="flex items-center justify-between">
               <p className="truncate text-sm font-medium text-primary">
-                {chat.other_user.full_name}
+                {chat.name}
               </p>
               {chat.last_message && (
                 <div className="ml-2 flex-shrink-0 text-sm text-gray-500">
@@ -153,7 +149,7 @@ export function ChatList() {
             </div>
             <div className="mt-2">
               <p className="text-sm text-gray-600">
-                Re: {chat.job_listing.title}
+                Participants: {chat.participants.map(participant => participant.user.full_name).join(', ')}
               </p>
               {chat.last_message && (
                 <p className="mt-1 text-sm text-gray-500 truncate">

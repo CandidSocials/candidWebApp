@@ -14,37 +14,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check active sessions and sets the user
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    let mounted = true;
 
-    // Listen for auth state changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // Check active session
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!mounted) return;
 
-    // Handle refresh token
-    const refreshToken = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) {
-        console.error('Error refreshing token:', error);
-        setUser(null);
-      } else if (session) {
-        setUser(session.user);
+        if (session?.user) {
+          setUser(session.user);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error('Error initializing auth:', error);
+        if (mounted) {
+          setUser(null);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
       }
     };
 
-    // Refresh token periodically
-    const refreshInterval = setInterval(refreshToken, 1800000); // 30 minutes
+    initializeAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!mounted) return;
+
+      if (session?.user) {
+        setUser(session.user);
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
-      clearInterval(refreshInterval);
     };
   }, []);
 
@@ -55,4 +67,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  return useContext(AuthContext);
+};

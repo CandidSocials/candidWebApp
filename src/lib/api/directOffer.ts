@@ -8,7 +8,7 @@ interface CreateJobListingParams {
 
 export async function createJobListing({ businessId, description, hourlyRate }: CreateJobListingParams) {
   const { data, error } = await supabase
-    .from('job_listings')
+    .from('job_listings_with_profiles')
     .insert([{
       business_id: businessId,
       title: 'Direct Offer',
@@ -19,7 +19,7 @@ export async function createJobListing({ businessId, description, hourlyRate }: 
       skills_required: [],
       status: 'open'
     }])
-    .select()
+    .select('*, business:profiles!inner(full_name, company_name)')
     .single();
 
   if (error) throw error;

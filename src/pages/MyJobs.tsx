@@ -23,15 +23,28 @@ export function MyJobs() {
   const fetchJobs = async () => {
     try {
       const { data, error } = await supabase
-        .from('job_listings')
-        .select('*')
+        .from('job_listings_with_profiles')
+        .select(`
+          id,
+          title,
+          description,
+          budget,
+          location,
+          category,
+          skills_required,
+          status,
+          created_at,
+          business_id,
+          business_full_name,
+          business_company_name
+        `)
         .eq('business_id', user?.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       setJobs(data || []);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch jobs');
+    } catch (error) {
+      console.error('Error fetching jobs:', error);
     } finally {
       setLoading(false);
     }
