@@ -21,7 +21,7 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen  w-full">
+        <div className="min-h-screen w-full">
           <Navigation />
           <main className="container w-full">
             <Routes>

@@ -81,7 +81,7 @@ export function Footer() {
 
         </div>
         {/* Bottom Bar */}
-        <div className="border-t border-white/10 py-6">
+        <div className="border-t border-solid border-[#8d8d8d68] py-6">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div>
               <img src="src/static/nav-logo.png" className="w-32 h-auto" />
