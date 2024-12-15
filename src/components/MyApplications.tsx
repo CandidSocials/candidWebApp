@@ -34,7 +34,7 @@ export function MyApplications() {
     return (
       <Box p={2}>
         <Alert severity="error">
-          Error cargando las aplicaciones: {error.message}
+          There was an error loading the applications: {error.message}
         </Alert>
       </Box>
     );
@@ -44,7 +44,7 @@ export function MyApplications() {
     return (
       <Box p={2}>
         <Alert severity="info">
-          No tienes aplicaciones a trabajos todavía.
+          You haven't applied to any jobs yet.
         </Alert>
       </Box>
     );
@@ -72,21 +72,21 @@ export function MyApplications() {
               </Typography>
 
               <Typography variant="body2" color="textSecondary" paragraph>
-                Presupuesto: ${application.job.budget}
+                Budget: ${application.job.budget}
               </Typography>
 
               {application.proposal && (
                 <Typography variant="body2" paragraph>
-                  <strong>Mi propuesta:</strong> {application.proposal}
+                  <strong>Mi Proposal:</strong> {application.proposal}
                 </Typography>
               )}
 
               <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Typography variant="caption" color="textSecondary">
-                  Aplicado hace {formatDistanceToNow(new Date(application.created_at))}
+                  Applied: {formatDistanceToNow(new Date(application.created_at))}
                 </Typography>
                 <Typography variant="caption" color="textSecondary">
-                  Estado del trabajo: {application.job.status}
+                  Status: {application.job.status}
                 </Typography>
               </Box>
             </CardContent>
