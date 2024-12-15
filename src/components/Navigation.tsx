@@ -1,10 +1,11 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Search, MessageSquare } from 'lucide-react';
+import { MessageSquare } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useProfile } from '../lib/useProfile';
 import { useAuth } from '../lib/AuthProvider';
 import { NotificationBell } from './notifications/NotificationBell';
+import { MobileNav } from './MobileNav';
 
 export function Navigation() {
   const { user } = useAuth();
@@ -33,10 +34,11 @@ export function Navigation() {
               onClick={handleLogoClick}
               className="flex items-center"
             >
-              <img src="src\static\nav-logo.png" width="150px" />
+              <img src="src/static/nav-logo.png" width="150px" alt="Logo" />
             </button>
           </div>
 
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
             {user && profile ? (
               <>
@@ -101,6 +103,9 @@ export function Navigation() {
               </button>
             )}
           </div>
+
+          {/* Mobile Navigation */}
+          <MobileNav />
         </div>
       </div>
     </nav>

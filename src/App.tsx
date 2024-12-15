@@ -23,7 +23,7 @@ function App() {
       <Router>
         <div className="min-h-screen w-full">
           <Navigation />
-          <main className="container w-full">
+          <main className="container w-full py-12">
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/auth" element={<AuthForm />} />
