@@ -60,7 +60,7 @@ export function MobileNav() {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex justify-between items-center p-4 border-b">
-            <img src="src/static/nav-logo.png" alt="Logo" className="w-32" />
+            <img src="\nav-logo.webp" alt="Logo" className="w-32" />
             <button
               onClick={() => setIsOpen(false)}
               className="p-2 text-gray-600 hover:text-gray-900"

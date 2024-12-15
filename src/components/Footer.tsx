@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 py-12 w-full">
           {/* About */}
           <div className="col-span-1">
-            <img src="/nav-logo.png" alt="Candid" className="w-32 h-auto mb-4" />
+            <img src="/nav-logo.webp" alt="Candid" className="w-32 h-auto mb-4" />
             <p className="text-gray-600 text-sm mb-4">
               Connect with local creative professionals for your content needs. Quality work, delivered locally.
             </p>

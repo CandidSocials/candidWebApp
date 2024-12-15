@@ -42,7 +42,7 @@ export function Navigation() {
               onClick={handleLogoClick}
               className="flex items-center"
             >
-              <img src="/nav-logo.png" width="150px" alt="Logo" />
+              <img src="/nav-logo.webp" width="150px" alt="Logo" />
             </button>
           </div>
 
