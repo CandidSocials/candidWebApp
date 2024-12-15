@@ -10,6 +10,7 @@ export type Message = {
   content: string;
   created_at: string;
   read_at?: string;
+  read?: boolean;
   sender_profile?: {
     id: string;
     full_name: string;
@@ -198,6 +199,6 @@ export function useMessages(receiverId: string, jobId?: string) {
     messages,
     loading,
     error,
-    sendMessage,
+    sendMessage
   };
 }

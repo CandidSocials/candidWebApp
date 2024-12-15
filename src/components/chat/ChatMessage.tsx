@@ -14,7 +14,7 @@ export function ChatMessage({ message, isOwnMessage }: ChatMessageProps) {
       isOwnMessage ? "items-end" : "items-start"
     )}>
       <div className="text-xs text-gray-500">
-        {message.sender?.full_name || 'Unknown'} • {format(new Date(message.created_at), 'HH:mm')}
+        {message.sender_profile?.full_name || 'Unknown'} • {format(new Date(message.created_at), 'HH:mm')}
       </div>
       <div
         className={cn(

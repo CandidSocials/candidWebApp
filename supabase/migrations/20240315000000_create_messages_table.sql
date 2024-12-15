@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     sender_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     receiver_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    job_id UUID REFERENCES jobs(id) ON DELETE CASCADE,
+    job_id UUID REFERENCES jobs(id) ON DELETE CASCADE DEFAULT NULL,
     content TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     read BOOLEAN DEFAULT FALSE,

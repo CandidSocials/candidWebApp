@@ -1,18 +1,9 @@
 export interface Message {
-  id: string;
+  id: number;
   sender_id: string;
   receiver_id: string;
   content: string;
   created_at: string;
-  read: boolean;
-  sender?: {
-    id: string;
-    full_name: string;
-  };
-  receiver?: {
-    id: string;
-    full_name: string;
-  };
 }
 
 export interface ChatRoom {
@@ -34,20 +25,17 @@ export interface ChatRoom {
 }
 
 export interface ChatProps {
-  chatId: string;
+  jobId?: string;
   otherUserId: string;
   otherUserName: string;
 }
 
-export interface ChatModalProps {
-  chatId: string;
-  jobTitle: string;
-  otherUserId: string;
+export interface MessageItemProps {
+  message: Message;
+  isOwnMessage: boolean;
   otherUserName: string;
 }
 
 export interface MessageInputProps {
-  onSend: (content: string) => void;
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSend: (content: string) => Promise<void>;
 }

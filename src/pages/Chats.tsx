@@ -6,17 +6,35 @@ import { MessageList } from '@/components/chat/MessageList';
 import { MessageInput } from '@/components/chat/MessageInput';
 import { OnlineUsers } from '@/components/chat/OnlineUsers';
 import { usePresence } from '@/components/chat/hooks/usePresence';
+import { useEnsureProfile } from '@/hooks/useEnsureProfile';
 
 export function Chats() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { onlineUsers } = usePresence();
+  const { profileReady, error: profileError } = useEnsureProfile();
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const { messages, loading, error, sendMessage } = useMessages(selectedUser || '');
 
   if (!user) {
     navigate('/auth');
     return null;
+  }
+
+  if (!profileReady) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (profileError) {
+    return (
+      <div className="text-center text-red-600 p-4">
+        Error setting up your profile. Please try again later.
+      </div>
+    );
   }
 
   if (loading) {

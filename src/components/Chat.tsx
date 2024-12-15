@@ -48,7 +48,7 @@ export function Chat({ jobId, otherUserId, otherUserName }: ChatProps) {
               <MessageItem
                 key={message.id}
                 message={message}
-                isOwnMessage={message.sender_id === user?.id}
+                isOwnMessage={message.sender_profile?.id === user?.id}
                 otherUserName={otherUserName}
               />
             ))

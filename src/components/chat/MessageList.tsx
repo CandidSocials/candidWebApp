@@ -13,7 +13,17 @@ export function MessageList({ messages, currentUser }: MessageListProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const scrollToBottom = () => {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Scroll inmediatamente para mensajes iniciales
+    scrollToBottom();
+
+    // Usar un pequeño delay para nuevos mensajes para asegurar que el DOM se ha actualizado
+    const timeoutId = setTimeout(scrollToBottom, 100);
+
+    return () => clearTimeout(timeoutId);
   }, [messages]);
 
   if (messages.length === 0) {
