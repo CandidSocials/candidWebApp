@@ -65,7 +65,7 @@ export function LandingPage() {
           {/* Left side content */}
           <div className=" lg:w-1/2 space-y-6 mb-32 z-30">
             <h1 className="font-poppins font-normal md:text-5xl text-4xl text-primary tracking-tight ">
-              Find Local Talent Near You At Candid App
+              Find Local Talent Near You
             </h1>
             <div className="relative">
               <input
