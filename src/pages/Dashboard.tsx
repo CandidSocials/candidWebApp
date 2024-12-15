@@ -92,11 +92,11 @@ export function Dashboard() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end">
+        <div className="flex w-full justify-end">
           {profile.role === 'freelancer' && (
             <button
               onClick={() => setListingModalOpen(true)}
-              className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-hover transition-colors duration-200 flex items-center space-x-2"
+              className="bg-primary text-white w-full md:w-fit px-6 py-3 rounded-lg hover:bg-primary-hover transition-colors duration-200 flex items-center space-x-2 justify-center"
             >
               <ListPlus className="h-5 w-5" />
               <span>Create Talent Listing</span>
@@ -105,7 +105,7 @@ export function Dashboard() {
           {profile.role === 'business' && (
             <button
               onClick={() => setJobModalOpen(true)}
-              className="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary-hover transition-colors duration-200 flex items-center space-x-2"
+              className="bg-primary text-white w-full md:w-fit px-6 py-3 rounded-lg hover:bg-primary-hover transition-colors duration-200 flex items-center space-x-2 justify-center"
             >
               <PlusCircle className="h-5 w-5" />
               <span>Create Job Posting</span>
