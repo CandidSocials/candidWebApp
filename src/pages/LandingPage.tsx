@@ -61,10 +61,10 @@ export function LandingPage() {
       {/* Hero Section */}
       <div className="px-4 sm:px-6 lg:px-8 z-1 mb-[100px] md:mb-32 flex items-center flex-col ">
       <img src="src\static\LandingPage\hero-bg.png" className=' hidden md:absolute w-full object-contain z-[-10] ' />
-        <div className="flex flex-col lg:flex-row items-center justify-between py-16 sm:py-24 gap-12">
+        <div className="flex flex-col lg:flex-row items-center justify-between py-16 sm:py-24 gap-0 lg:gap-12">
           {/* Left side content */}
-          <div className="lg:w-1/2 space-y-6 mb-32 z-30">
-            <h1 className="font-poppins font-normal md:text-5xl text-6xl text-primary tracking-tight ">
+          <div className=" lg:w-1/2 space-y-6 mb-32 z-30">
+            <h1 className="font-poppins font-normal md:text-5xl text-4xl text-primary tracking-tight ">
               Find Local Talent Near You At Candid App
             </h1>
             <div className="relative">
@@ -94,9 +94,9 @@ export function LandingPage() {
           </div>
           
           {/* Right side images */}
-          <div className="lg:w-1/2 relative mt-12 lg:mt-0 z-1">
+          <div className="lg:w-1/2 relative mt-0 lg:mt-12 z-1">
             <div className="relative z-10 grid grid-cols-2 gap-4">
-              <div className="rounded-full h-fit mt-24">
+              <div className="rounded-full h-fit mt-6 lg:mt-24">
                 <img src="src\static\LandingPage\hero-2.webp" alt="Photographer" className="rounded-lg" />
               </div>
               <div className="rounded-full">
@@ -109,7 +109,7 @@ export function LandingPage() {
         </div>
 
         {/* Service Icons */}
-        <div className="w-[80%] grid grid-cols-1 md:grid-cols-3 gap-24 px-24 py-12 z-[10] bg-white mt-[-180px] rounded-xl">
+        <div className="shadow-lg lg:shadow-none w-[80%] grid grid-cols-1 lg:grid-cols-3 gap-24 px-10 lg:px-24 py-12 z-[10] bg-white mt-[-180px] rounded-xl">
           <div className="text-left space-y-4  z-1">
             <img src="src\static\LandingPage\hero-item-1.png" className='w-12 h-12' />
             <h3 className="text-gray-600 font-medium">Book the Best Photographers for Unforgettable Moments</h3>
@@ -127,7 +127,7 @@ export function LandingPage() {
         </div>
       </div>
       {/* How it works */}
-        <div className='flex flex-col w-full mx-4 md:mx-24 items-center justify-center mb-40'>
+        <div className='flex flex-col w-full mx-4 md:mx-24 items-center justify-center mb-12 lg:mb-40'>
           <div className='flex flex-col gap-8 lg:gap-12 px-2 md:px-12 w-full shadow-lg mb-4 md:w-[50%] lg:w-[40%] xl:w-[35%] md:absolute left-0 2xl:left-24 bg-white z-10 py-12 rounded-2xl'>
             {/* Step 1 */}
             <h3 className='text-[#0A2B14] text-2xl font-semibold' >How it works</h3>
@@ -150,14 +150,14 @@ export function LandingPage() {
         </div>
 
         {/* The local content solution... */}
-        <div className="flex flex-col w-full mb-12 items-left justify-start gap-0 h-fit">
+        <div className="flex flex-col w-full mb-0 lg:mb-12 items-left justify-start gap-0 h-fit">
         <img src="src\static\LandingPage\hero-bg.png" className=' left-0 hidden md:absolute w-full h-auto object-contain overflow-hidden z-[-10] ' />
-          <h3 className='text-[#222325] w-1/2 text-4xl mb-12 font-medium'>
+          <h3 className='text-[#222325] w-full lg:w-1/2 text-4xl mb-12 font-medium'>
             The <span className="text-primary ">local</span> content solution for businesses & creatives
           </h3>
-          <div className='w-full flex flex-row gap-0 mb-24'>
+          <div className='w-full flex flex-col lg:flex-row gap-12 mb-0 lg:mb-24'>
           
-          <div className="w-full grid grid-cols-2 gap-8 text-[#222325]">
+          <div className="w-full grid grid-cols-1 gap-8 text-[#222325]">
             <div>
               <img src="src\static\LandingPage\check.png" className="w-4 h-4" />
               <h2 className="text-2xl font-normal mb-2 mt-2">Only Local Creatives</h2>
@@ -183,13 +183,13 @@ export function LandingPage() {
             </div>
           </div>
           <div className='w-full'>
-            <img src="src\static\LandingPage\Landing-1.png" />
+            <img className='w-full' src="src\static\LandingPage\Landing-1.png" />
           </div>
           
         </div>
           <button 
             onClick={() => navigate('/auth')}
-            className='flex mt-[-50px] bg-primary w-fit py-2 px-8 h-12 justify-center items-center rounded-lg hover:bg-primary-hover'> 
+            className='flex mt-6 bg-primary w-fit py-2 px-8 h-12 justify-center items-center rounded-lg hover:bg-primary-hover'> 
             <h3 className='text-white font-medium text-lg'>
               Try Now
             </h3> 
@@ -197,10 +197,10 @@ export function LandingPage() {
         </div>
        
 
-        <div className='w-full flex flex-col mt-12 mb-12 gap-12 bg-white rounded-xl'>
-          <h3 className="w-1/2 text-4xl mb-12 text-[#222325] font-medium">Make it all happen <span className='text-primary'>locally.</span></h3>
+        <div className='w-full flex flex-col mt-12 mb-12 gap-2 lg:gap-12 bg-white rounded-xl'>
+          <h3 className="w-full md:w-1/2 text-4xl mb-12 text-[#222325] font-medium">Make it all happen <span className='text-primary'>locally.</span></h3>
 
-          <div className='grid grid-cols-1 md:grid-cols-4 w-full gap-32 justify-center items-center'>
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 w-full gap-12 lg:gap-32 justify-center items-center'>
             {/* Number 1 */}
             <div className='flex flex-col gap-6'>
               <img src="src\static\LandingPage\char-1.png" className='w-12 h-12'/>
@@ -235,63 +235,11 @@ export function LandingPage() {
 
           <button 
             onClick={() => navigate('/auth')}
-            className='flex bg-primary w-fit px-8 h-12 justify-center items-center rounded-lg hover:bg-primary-hover'> 
+            className='flex bg-primary w-fit mt-6 px-8 h-12 justify-center items-center rounded-lg hover:bg-primary-hover'> 
             <h3 className='text-white font-semibold text-lg'>
               Join Now
             </h3> 
           </button>
-        </div>
-    
-        {/* Recent Jobs Section */}
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">Recent Jobs</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentJobs.map((job) => (
-              <div key={job.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                <div className="p-6">
-                  <div className="flex justify-between items-start">
-                    <h3 className="text-xl font-semibold text-gray-900">{job.title}</h3>
-                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary/10 text-primary">
-                      {job.category}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-gray-600 line-clamp-3">{job.description}</p>
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center text-gray-500">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {job.location}
-                    </div>
-                    <div className="flex items-center text-gray-500">
-                      <DollarSign className="h-4 w-4 mr-2" />
-                      ${job.budget}
-                    </div>
-                    <div className="flex items-center text-gray-500">
-                      <Clock className="h-4 w-4 mr-2" />
-                      {new Date(job.created_at).toLocaleDateString()}
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    <div className="flex flex-wrap gap-2">
-                      {job.skills_required.map((skill) => (
-                        <span
-                          key={skill}
-                          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setSelectedJob(job)}
-                    className="mt-6 w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-hover"
-                  >
-                    View Details
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Job Application Modal */}
@@ -308,21 +256,21 @@ export function LandingPage() {
         )}
 
         {/* CTA */}
-        <div className="grid grid-cols-2 h-fit  mb-12 rounded-full">
-          <div className="relative bg-cover h-full bg-center bg-no-repeat object-left overflow-hidden rounded-tl-xl rounded-bl-xl" style={{ backgroundImage: "url('src\\/static\\/LandingPage\\/CTA-1.png')" }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 h-fit  mb-12 rounded-full w-full gap-6 lg:gap-0">
+          <div className="relative bg-cover h-full bg-center bg-no-repeat object-left overflow-hidden rounded-tl-xl rounded-tr-xl rounded-bl-xl rounded-br-xl lg:rounded-br-none lg:rounded-tr-none lg:rounded-tl-xl " style={{ backgroundImage: "url('src\\/static\\/LandingPage\\/CTA-1.png')" }}>
             <div className="relative z-10 flex flex-col justify-center items-start h-full px-12 gap-8 rounded-xl">
-              <h1 className="text-5xl font-medium text-white mb-4">Your Next Big Idea Starts Here, Locally.</h1>
+              <h1 className="mt-12 lg:mt-0 text-2xl lg:text-5xl font-medium text-white mb-4">Your Next Big Idea Starts Here, Locally.</h1>
               <button 
                 onClick={() => navigate('/auth')}
-                className='bg-white text-[#222325] font-medium py-3 px-6 rounded-md hover:bg-gray-300 transition-colors'> 
-                <h3 className='font-medium text-lg'>
+                className='bg-white text-[#222325] font-medium mb-12 lg:mb-0 py-3 px-6 rounded-md hover:bg-gray-300 transition-colors'> 
+                <h3 className='font-medium text-base lg:text-lg'>
                 JOIN CANDID
                 </h3> 
               </button>
             </div>
           </div>
-          <div className="bg-gray-100 flex items-center justify-center">
-            <img src="src\static\LandingPage\CTA-2.png" />
+          <div className="bg-white  flex items-center justify-center">
+            <img className="object-cover w-full  overflow-hidden" src="src\static\LandingPage\CTA-2.png" />
           </div>
         </div>
       </div>
