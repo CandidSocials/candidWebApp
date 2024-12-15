@@ -1,37 +1,28 @@
 import { useState } from 'react';
 import { useAuth } from '@/lib/AuthProvider';
-import { supabase } from '@/lib/supabase';
 import { MessageSquare, X } from 'lucide-react';
-import { ChatRoomList } from './ChatRoomList';
 import { MessageList } from './MessageList';
 import { MessageInput } from './MessageInput';
-import { OnlineUsers } from './OnlineUsers';
-import { useChatRooms } from './hooks/useChatRooms';
 import { useMessages } from './hooks/useMessages';
-import { usePresence } from './hooks/usePresence';
 
-export function ChatWindow() {
+interface ChatWindowProps {
+  otherUserId: string;
+  otherUserName: string;
+}
+
+export function ChatWindow({ otherUserId, otherUserName }: ChatWindowProps) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
-  const [currentRoom, setCurrentRoom] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
   
-  const { rooms } = useChatRooms();
-  const { messages } = useMessages(currentRoom);
-  const { onlineUsers } = usePresence();
+  const { messages, loading, error, sendMessage } = useMessages(otherUserId);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !currentRoom || !user) return;
+    if (!newMessage.trim()) return;
 
     try {
-      await supabase.from('chat_messages').insert([
-        {
-          room_id: currentRoom,
-          sender_id: user.id,
-          content: newMessage.trim(),
-        },
-      ]);
+      await sendMessage(newMessage.trim());
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -50,33 +41,40 @@ export function ChatWindow() {
       </button>
 
       {isOpen && (
-        <div className="bg-white rounded-t-lg shadow-xl w-96 h-[600px] flex flex-col">
-          <div className="p-4 border-b flex justify-between items-center bg-primary text-white rounded-t-lg">
-            <h2 className="font-semibold">Chat</h2>
-            <button onClick={() => setIsOpen(false)}>
+        <div className="bg-white rounded-lg shadow-xl w-96 h-[600px] flex flex-col">
+          <div className="p-4 border-b flex justify-between items-center">
+            <div>
+              <h2 className="text-lg font-semibold">{otherUserName}</h2>
+              <p className="text-sm text-gray-500">
+                {messages.some(m => m.receiver_id === user.id && !m.read) ? 'New messages' : 'Chat'}
+              </p>
+            </div>
+            <button onClick={() => setIsOpen(false)} className="text-gray-500 hover:text-gray-700">
               <X className="h-5 w-5" />
             </button>
           </div>
 
-          <div className="flex-1 flex">
-            <ChatRoomList
-              rooms={rooms}
-              currentRoom={currentRoom}
-              userId={user.id}
-              onRoomSelect={setCurrentRoom}
-            />
-
-            <div className="flex-1 flex flex-col">
-              <MessageList messages={messages} userId={user.id} />
-              <MessageInput
-                value={newMessage}
-                onChange={setNewMessage}
-                onSubmit={handleSendMessage}
-              />
-            </div>
-
-            <OnlineUsers onlineUsers={onlineUsers} />
+          <div className="flex-1 overflow-y-auto p-4">
+            {loading ? (
+              <div className="text-center text-gray-500 mt-4">Loading messages...</div>
+            ) : error ? (
+              <div className="text-center text-red-500 mt-4">Error loading messages</div>
+            ) : messages.length === 0 ? (
+              <div className="text-center text-gray-500 mt-4">
+                No messages yet. Start the conversation!
+              </div>
+            ) : (
+              <MessageList messages={messages} currentUser={user} />
+            )}
           </div>
+
+          <form onSubmit={handleSendMessage} className="p-4 border-t">
+            <MessageInput
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              onSubmit={handleSendMessage}
+            />
+          </form>
         </div>
       )}
     </div>

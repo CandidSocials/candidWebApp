@@ -1,13 +1,16 @@
 export interface Message {
   id: string;
-  room_id: string;
   sender_id: string;
+  receiver_id: string;
   content: string;
-  type: 'text' | 'image' | 'file';
   created_at: string;
-  updated_at: string;
-  is_edited: boolean;
+  read: boolean;
   sender?: {
+    id: string;
+    full_name: string;
+  };
+  receiver?: {
+    id: string;
     full_name: string;
   };
 }
@@ -15,19 +18,36 @@ export interface Message {
 export interface ChatRoom {
   id: string;
   name: string;
-  type: 'direct' | 'group';
+  created_at: string;
   updated_at: string;
-  participants: Array<{
+  participants: {
     user_id: string;
     profile: {
       full_name: string;
+      avatar_url?: string;
     };
-  }>;
+  }[];
+  last_message?: {
+    content: string;
+    created_at: string;
+  };
 }
 
-export interface ChatParticipant {
-  user_id: string;
-  profile: {
-    full_name: string;
-  };
+export interface ChatProps {
+  chatId: string;
+  otherUserId: string;
+  otherUserName: string;
+}
+
+export interface ChatModalProps {
+  chatId: string;
+  jobTitle: string;
+  otherUserId: string;
+  otherUserName: string;
+}
+
+export interface MessageInputProps {
+  onSend: (content: string) => void;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }

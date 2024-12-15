@@ -1,0 +1,92 @@
+Resumen de la Conversación - 15 de Diciembre 2024
+
+CONTEXTO INICIAL:
+- Trabajando en resolver problemas con el sistema de chat
+- Asegurando el envío y recepción correcta de mensajes
+- Abordando restricciones de la base de datos
+
+ESTADO INICIAL DE LA BASE DE DATOS:
+Tabla messages:
+- id (uuid, PRIMARY KEY)
+- sender_id (uuid, FK -> user_profiles.id)
+- receiver_id (uuid, FK -> user_profiles.id)
+- job_id (uuid, FK -> job_listings.id)
+- content (text)
+- created_at (timestamptz)
+- read_at (timestamptz)
+
+CAMBIOS REALIZADOS:
+
+1. Hook useMessages.ts:
+- Actualizado el tipo Message para usar read_at en lugar de read
+- Modificado para usar user_profiles en lugar de auth.users
+- Corregidas las referencias de sender/receiver a sender_profile/receiver_profile
+- Implementada la obtención de IDs de perfiles antes de las operaciones
+
+2. Estructura de la Base de Datos:
+- Confirmada la estructura correcta de la tabla messages
+- Verificadas las foreign keys a user_profiles
+- Mantenida la columna read_at como timestamp
+
+3. Consultas SQL Utilizadas:
+```sql
+-- Consulta de estructura de tabla
+SELECT 
+    c.column_name, 
+    c.data_type, 
+    c.is_nullable,
+    c.column_default,
+    tc.constraint_type,
+    cc.table_name as foreign_table
+FROM 
+    information_schema.columns c
+LEFT JOIN 
+    information_schema.constraint_column_usage ccu 
+    ON c.column_name = ccu.column_name 
+    AND c.table_name = ccu.table_name
+LEFT JOIN 
+    information_schema.table_constraints tc 
+    ON ccu.constraint_name = tc.constraint_name
+LEFT JOIN 
+    information_schema.constraint_column_usage cc 
+    ON tc.constraint_name = cc.constraint_name 
+    AND tc.constraint_type = 'FOREIGN KEY'
+WHERE 
+    c.table_name = 'messages'
+    AND c.table_schema = 'public'
+ORDER BY 
+    c.ordinal_position;
+
+-- Consulta de foreign keys
+SELECT
+    tc.constraint_name,
+    tc.constraint_type,
+    kcu.column_name,
+    ccu.table_name AS foreign_table_name,
+    ccu.column_name AS foreign_column_name
+FROM
+    information_schema.table_constraints tc
+    JOIN information_schema.key_column_usage kcu 
+        ON tc.constraint_name = kcu.constraint_name
+    JOIN information_schema.constraint_column_usage ccu
+        ON ccu.constraint_name = tc.constraint_name
+WHERE 
+    tc.table_name = 'messages'
+    AND tc.table_schema = 'public'
+    AND tc.constraint_type = 'FOREIGN KEY';
+```
+
+ESTADO FINAL:
+- Hook useMessages actualizado para manejar correctamente los perfiles de usuario
+- Base de datos configurada con las relaciones correctas
+- Sistema listo para pruebas
+
+PRÓXIMOS PASOS:
+1. Probar el envío de mensajes
+2. Verificar la actualización de read_at
+3. Confirmar que las relaciones con user_profiles funcionan correctamente
+
+CREDENCIALES SUPABASE:
+URL: https://vbohuoqhvfvhpedujgrd.supabase.co
+ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZib2h1b3FodmZ2aHBlZHVqZ3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQxNDQ3NzksImV4cCI6MjA0OTcyMDc3OX0.ks9Kmi8yL4Z6YKFcV6k-BV0ft3HFITL1o3GYPxs5rmM
+SERVICE_ROLE: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZib2h1b3FodmZ2aHBlZHVqZ3JkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczNDE0NDc3OSwiZXhwIjoyMDQ5NzIwNzc5fQ.vfeAffThjzqrU2q0vrOwGGEVLE9Z6URkzhzjH2yVXDE

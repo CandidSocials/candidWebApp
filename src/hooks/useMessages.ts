@@ -4,53 +4,84 @@ import { useAuth } from '../lib/AuthProvider';
 
 export type Message = {
   id: string;
-  job_id: string;
   sender_id: string;
   receiver_id: string;
+  job_id?: string;
   content: string;
   created_at: string;
-  read_at: string | null;
+  read_at?: string;
   sender_profile?: {
+    id: string;
     full_name: string;
   };
   receiver_profile?: {
+    id: string;
     full_name: string;
   };
 };
 
-export function useMessages(jobId: string, receiverId: string) {
+export function useMessages(receiverId: string, jobId?: string) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    if (!user || !jobId || !receiverId) return;
+    if (!user || !receiverId) return;
 
     const fetchMessages = async () => {
       try {
-        const { data, error } = await supabase
+        // Primero obtenemos los IDs de los perfiles
+        const { data: senderProfile, error: senderError } = await supabase
+          .from('user_profiles')
+          .select('id')
+          .eq('user_id', user.id)
+          .single();
+
+        if (senderError) {
+          throw new Error('Could not find sender profile');
+        }
+
+        const { data: receiverProfile, error: receiverError } = await supabase
+          .from('user_profiles')
+          .select('id')
+          .eq('user_id', receiverId)
+          .single();
+
+        if (receiverError) {
+          throw new Error('Could not find receiver profile');
+        }
+
+        // Luego usamos esos IDs para buscar los mensajes
+        const query = supabase
           .from('messages')
           .select(`
             *,
-            sender_profile:user_profiles!messages_sender_id_fkey(
+            sender_profile:sender_id(
+              id,
               full_name
             ),
-            receiver_profile:user_profiles!messages_receiver_id_fkey(
+            receiver_profile:receiver_id(
+              id,
               full_name
             )
           `)
-          .or(`and(sender_id.eq.${user.id},receiver_id.eq.${receiverId}),and(sender_id.eq.${receiverId},receiver_id.eq.${user.id})`)
-          .eq('job_id', jobId)
-          .order('created_at', { ascending: true });
+          .or(`and(sender_id.eq.${senderProfile.id},receiver_id.eq.${receiverProfile.id}),and(sender_id.eq.${receiverProfile.id},receiver_id.eq.${senderProfile.id})`);
+
+        if (jobId) {
+          query.eq('job_id', jobId);
+        }
+
+        const { data, error } = await query.order('created_at', { ascending: true });
 
         if (error) {
-          console.error('Error fetching messages:', error);
-          return;
+          throw error;
         }
 
         setMessages(data || []);
       } catch (error) {
-        console.error('Error in fetchMessages:', error);
+        console.error('[useMessages] Error fetching messages:', error);
+        setError(error instanceof Error ? error : new Error('Unknown error'));
       } finally {
         setLoading(false);
       }
@@ -67,31 +98,48 @@ export function useMessages(jobId: string, receiverId: string) {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `job_id=eq.${jobId}`,
+          filter: jobId ? `job_id=eq.${jobId}` : undefined,
         },
         async (payload) => {
           const newMessage = payload.new as Message;
-          if (
-            (newMessage.sender_id === user.id && newMessage.receiver_id === receiverId) ||
-            (newMessage.sender_id === receiverId && newMessage.receiver_id === user.id)
-          ) {
-            // Fetch the complete message with profiles
-            const { data, error } = await supabase
-              .from('messages')
-              .select(`
-                *,
-                sender_profile:user_profiles!messages_sender_id_fkey(
-                  full_name
-                ),
-                receiver_profile:user_profiles!messages_receiver_id_fkey(
-                  full_name
-                )
-              `)
-              .eq('id', newMessage.id)
-              .single();
+          
+          // Obtener los IDs de los perfiles para comparar
+          const { data: senderProfile } = await supabase
+            .from('user_profiles')
+            .select('id')
+            .eq('user_id', user.id)
+            .single();
 
-            if (!error && data) {
-              setMessages((prevMessages) => [...prevMessages, data]);
+          const { data: receiverProfile } = await supabase
+            .from('user_profiles')
+            .select('id')
+            .eq('user_id', receiverId)
+            .single();
+
+          if (senderProfile && receiverProfile) {
+            if (
+              (newMessage.sender_id === senderProfile.id && newMessage.receiver_id === receiverProfile.id) ||
+              (newMessage.sender_id === receiverProfile.id && newMessage.receiver_id === senderProfile.id)
+            ) {
+              const { data, error } = await supabase
+                .from('messages')
+                .select(`
+                  *,
+                  sender_profile:sender_id(
+                    id,
+                    full_name
+                  ),
+                  receiver_profile:receiver_id(
+                    id,
+                    full_name
+                  )
+                `)
+                .eq('id', newMessage.id)
+                .single();
+
+              if (!error && data) {
+                setMessages((prevMessages) => [...prevMessages, data]);
+              }
             }
           }
         }
@@ -104,49 +152,52 @@ export function useMessages(jobId: string, receiverId: string) {
   }, [user, jobId, receiverId]);
 
   const sendMessage = async (content: string) => {
-    if (!user || !jobId || !receiverId) return;
+    if (!user || !receiverId) return;
 
     try {
-      const { data: userProfile } = await supabase
+      // Obtener los IDs de los perfiles
+      const { data: senderProfile, error: senderError } = await supabase
         .from('user_profiles')
         .select('id')
         .eq('user_id', user.id)
         .single();
 
-      if (!userProfile) {
-        console.error('User profile not found');
-        return;
+      if (senderError) {
+        throw new Error('Could not find sender profile');
       }
 
-      const { data: receiverProfile } = await supabase
+      const { data: receiverProfile, error: receiverError } = await supabase
         .from('user_profiles')
         .select('id')
         .eq('user_id', receiverId)
         .single();
 
-      if (!receiverProfile) {
-        console.error('Receiver profile not found');
-        return;
+      if (receiverError) {
+        throw new Error('Could not find receiver profile');
       }
 
       const { error } = await supabase.from('messages').insert({
-        job_id: jobId,
-        sender_id: userProfile.id,
+        job_id: jobId || null,
+        sender_id: senderProfile.id,
         receiver_id: receiverProfile.id,
         content,
+        read_at: null
       });
 
       if (error) {
-        console.error('Error sending message:', error);
+        console.error('[useMessages] Error sending message:', error);
+        throw error;
       }
     } catch (error) {
-      console.error('Error in sendMessage:', error);
+      console.error('[useMessages] Error in sendMessage:', error);
+      throw error;
     }
   };
 
   return {
     messages,
     loading,
+    error,
     sendMessage,
   };
 }

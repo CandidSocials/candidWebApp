@@ -1,17 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useMessages } from '../../hooks/useMessages';
-import { useAuth } from '../../lib/AuthProvider';
-import {
-  Box,
-  Paper,
-  TextField,
-  IconButton,
-  Typography,
-  CircularProgress,
-  Alert,
-  Avatar
-} from '@mui/material';
-import { Send } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { useAuth } from '@/lib/AuthProvider';
+import { useMessages } from '@/hooks/useMessages';
+import { Box, Paper, TextField, IconButton, Typography, Avatar, Alert, CircularProgress } from '@mui/material';
+import { Send } from '@mui/icons-material';
 import { formatDistanceToNow } from 'date-fns';
 
 interface JobMessagesProps {
@@ -22,8 +13,9 @@ interface JobMessagesProps {
 
 export function JobMessages({ jobId, otherUserId, otherUserName }: JobMessagesProps) {
   const { user } = useAuth();
-  const { messages, loading, error, sendMessage } = useMessages(jobId, otherUserId);
+  const { messages, loading, error, sendMessage } = useMessages(otherUserId, jobId);
   const [newMessage, setNewMessage] = useState('');
+  const [sendError, setSendError] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -39,10 +31,12 @@ export function JobMessages({ jobId, otherUserId, otherUserName }: JobMessagesPr
     if (!newMessage.trim()) return;
 
     try {
+      setSendError('');
       await sendMessage(newMessage.trim());
       setNewMessage('');
     } catch (err) {
       console.error('Error sending message:', err);
+      setSendError('Failed to send message. Please try again.');
     }
   };
 
@@ -58,7 +52,7 @@ export function JobMessages({ jobId, otherUserId, otherUserName }: JobMessagesPr
     return (
       <Box p={2}>
         <Alert severity="error">
-          Error cargando mensajes: {error.message}
+          Error loading messages: {error.message}
         </Alert>
       </Box>
     );
@@ -124,6 +118,15 @@ export function JobMessages({ jobId, otherUserId, otherUserName }: JobMessagesPr
         <div ref={messagesEndRef} />
       </Box>
 
+      {/* Error Message */}
+      {sendError && (
+        <Box px={2}>
+          <Alert severity="error" onClose={() => setSendError('')}>
+            {sendError}
+          </Alert>
+        </Box>
+      )}
+
       {/* Message Input */}
       <Box
         component="form"
@@ -139,7 +142,7 @@ export function JobMessages({ jobId, otherUserId, otherUserName }: JobMessagesPr
         <TextField
           fullWidth
           size="small"
-          placeholder="Escribe un mensaje..."
+          placeholder="Write a message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           multiline

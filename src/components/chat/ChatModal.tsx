@@ -10,7 +10,7 @@ import {
 import { Chat } from './Chat'
 import { ChatModalProps } from './types'
 
-export function ChatModal({ chatId, jobTitle, otherUserName }: ChatModalProps) {
+export function ChatModal({ chatId, jobTitle, otherUserId, otherUserName }: ChatModalProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -25,7 +25,11 @@ export function ChatModal({ chatId, jobTitle, otherUserName }: ChatModalProps) {
         <DialogHeader>
           <DialogTitle>Chat - {jobTitle}</DialogTitle>
         </DialogHeader>
-        <Chat chatId={chatId} otherUserName={otherUserName} />
+        <Chat 
+          chatId={chatId} 
+          otherUserId={otherUserId}
+          otherUserName={otherUserName} 
+        />
       </DialogContent>
     </Dialog>
   )
