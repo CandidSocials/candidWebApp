@@ -97,7 +97,7 @@ export function JobMessages({ jobId, otherUserId, otherUserName }: JobMessagesPr
                 bgcolor: message.sender_id === user?.id ? 'primary.main' : 'secondary.main'
               }}
             >
-              {message.sender?.full_name?.[0]?.toUpperCase() || '?'}
+              {message.sender_profile?.full_name?.[0]?.toUpperCase() || '?'}
             </Avatar>
             <Box>
               <Paper

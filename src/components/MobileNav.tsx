@@ -13,9 +13,23 @@ export function MobileNav() {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
-    setIsOpen(false);
+    try {
+      // Primero limpiamos cualquier estado local
+      localStorage.removeItem('candid-auth-token');
+      
+      // Luego intentamos hacer el signOut
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Error during sign out:', error);
+        // Si hay un error, igual navegamos a home ya que hemos limpiado el estado local
+      }
+    } catch (err) {
+      console.error('Error during sign out:', err);
+    } finally {
+      // Siempre navegamos a home y cerramos el menú, incluso si hubo un error
+      navigate('/');
+      setIsOpen(false);
+    }
   };
 
   const handleNavigation = (path: string) => {

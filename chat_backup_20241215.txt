@@ -132,3 +132,26 @@ SERVICE_ROLE: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 - RLS está deshabilitado para evitar problemas de permisos
 - La tabla messages referencia directamente a user_profiles
 - Todas las consultas están optimizadas con índices apropiados
+
+## CONVERSACIONES
+=== Sesión 2024-12-15 04:14:01 ===
+USER: Error 403 al hacer logout
+ASSISTANT: Identificado error 403 Forbidden al intentar hacer logout en la aplicación. Se implementó una solución más robusta para manejar el logout:
+
+1. Actualización de componentes Navigation y MobileNav:
+   - Limpieza del estado local antes de intentar signOut
+   - Manejo de errores mejorado
+   - Navegación consistente a home incluso si falla el signOut
+
+2. Cambios específicos:
+   - Limpieza del token de autenticación: localStorage.removeItem('candid-auth-token')
+   - Manejo de errores en el signOut de Supabase
+   - Navegación a home garantizada en el bloque finally
+   - Logging de errores para mejor debugging
+
+3. Resultado:
+   - Resuelto el error 403 Forbidden
+   - Logout más robusto y consistente
+   - Mejor experiencia de usuario al manejar errores graciosamente
+
+Commit: "fix: handle logout gracefully and clear local state"
