@@ -69,7 +69,7 @@ export function JobMessages({ jobId, otherUserId, otherUserName }: JobMessagesPr
       {/* Header */}
       <Box p={2} bgcolor="primary.main" color="primary.contrastText">
         <Typography variant="h6">
-          Chat con {otherUserName}
+          Chat with {otherUserName}
         </Typography>
       </Box>
 

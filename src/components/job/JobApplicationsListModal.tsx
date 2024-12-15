@@ -195,7 +195,7 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg w-full max-w-4xl max-h-[90vh] overflow-hidden">
         <div className="p-4 border-b flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Aplicaciones para: {job.title}</h2>
+          <h2 className="text-xl font-semibold">Job applications for {job.title}</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <X className="h-6 w-6" />
           </button>
@@ -239,10 +239,10 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
                       <button
                         onClick={() => setSelectedChat({
                           userId: application.freelancer_id,
-                          userName: application.freelancer?.full_name || 'Usuario'
+                          userName: application.freelancer?.full_name || 'User'
                         })}
                         className="p-2 text-blue-600 hover:bg-blue-50 rounded-full"
-                        title="Enviar mensaje"
+                        title="Send message"
                       >
                         <MessageSquare className="h-5 w-5" />
                       </button>
@@ -251,14 +251,14 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
                           <button
                             onClick={() => handleAccept(application.id)}
                             className="p-2 text-green-600 hover:bg-green-50 rounded-full"
-                            title="Aceptar aplicación"
+                            title="Accept application"
                           >
                             <Check className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() => handleReject(application.id)}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-full"
-                            title="Rechazar aplicación"
+                            title="Reject application"
                           >
                             <XCircle className="h-5 w-5" />
                           </button>
@@ -282,7 +282,7 @@ export function JobApplicationsListModal({ job, onClose }: JobApplicationsListMo
       >
         <DialogTitle>
           <div className="flex justify-between items-center">
-            <span>Chat con {selectedChat?.userName}</span>
+            <span>Chat with {selectedChat?.userName}</span>
             <IconButton
               edge="end"
               color="inherit"
