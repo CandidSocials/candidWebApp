@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Star, MapPin, Clock, Briefcase } from 'lucide-react'
+import { Star, MapPin, Clock, Briefcase, Phone, Mail } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import { ReviewsList } from '../components/freelancer/ReviewsList'
 import { PortfolioList } from '../components/freelancer/PortfolioList'
@@ -72,6 +72,11 @@ export function FreelancerProfile() {
 
   const canSendDirectOffer = currentUserProfile?.role === 'business'
 
+  const handleContactClick = (type: 'phone' | 'email') => {
+    // For now, just show an alert
+    alert(`Contact via ${type} functionality coming soon!`)
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Header Section */}
@@ -113,12 +118,33 @@ export function FreelancerProfile() {
         </div>
 
         {canSendDirectOffer && (
-          <button
-            onClick={() => setShowDirectOfferModal(true)}
-            className="mt-6 w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-hover transition-colors"
-          >
-            Send Direct Offer
-          </button>
+          <div className="mt-6 space-y-3">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col md:flex-row gap-3">
+              <button
+                onClick={() => handleContactClick('phone')}
+                className="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition-colors"
+              >
+                <Phone className="h-5 w-5" />
+                Contact via WhatsApp
+              </button>
+              <button
+                onClick={() => handleContactClick('email')}
+                className="flex-1 flex items-center justify-center gap-2 bg-blue-400 text-white py-2 px-4 rounded-md hover:bg-blue-500 transition-colors"
+              >
+                <Mail className="h-5 w-5" />
+                Contact via Email
+              </button>
+              </div>
+              
+            </div>
+            <button
+              onClick={() => setShowDirectOfferModal(true)}
+              className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-hover transition-colors"
+            >
+              Send Direct Offer
+            </button>
+          </div>
         )}
       </div>
 
